@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Menu, X, ArrowRight } from "lucide-react";
-import logo from "../assets/logo.jpeg";
+import logo from "../assets/logo.png";
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -60,7 +60,7 @@ const Navbar = () => {
               <img
                 src={logo}
                 alt="Igati Global Mission Network"
-                className="h-14 w-14 shrink-0 object-contain sm:h-16 sm:w-16"
+                className="h-16 w-16 shrink-0 object-contain sm:h-20 sm:w-20"
               />
 
               <div className="hidden min-w-0 sm:block">

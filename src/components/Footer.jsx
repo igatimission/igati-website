@@ -12,7 +12,7 @@ import {
   FaXTwitter,
 } from "react-icons/fa6";
 
-import logo from "../assets/logo.jpeg";
+import logo from "../assets/logo.png";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
