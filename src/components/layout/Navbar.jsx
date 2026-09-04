@@ -24,18 +24,23 @@ const Navbar = () => {
   return (
     <header className="sticky top-0 z-50 border-b border-gray-100 bg-white/95 shadow-sm backdrop-blur-xl">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-[76px] items-center justify-between lg:h-[82px]">
+        <div className="flex h-[90px] items-center justify-between lg:h-[105px]">
           {/* Logo */}
           <Link
             to="/"
             onClick={closeMobileMenu}
             className="group flex min-w-0 items-center gap-3"
           >
-            <img
+            {/* <img
               src={logo}
               alt="IGATI Global Mission Network"
               className="h-16 w-16 shrink-0 object-contain transition-transform duration-300 group-hover:scale-[1.03] sm:h-20 sm:w-20"
-            />
+            /> */}
+            <img
+  src={logo}
+  alt="IGATI Global Mission Network"
+  className="h-20 w-20 shrink-0 object-contain transition-transform duration-300 group-hover:scale-[1.03] sm:h-24 sm:w-24 lg:h-28 lg:w-28"
+/>
 
             {/* <div className="hidden min-w-0 sm:block">
               <h1 className="text-base font-bold leading-tight tracking-wide text-[#073B4C] lg:text-lg">
