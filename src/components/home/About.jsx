@@ -254,7 +254,7 @@ const About = () => {
             </div>
 
             {/* Small impact badge */}
-            <div className="absolute -bottom-5 -left-3 hidden rounded-2xl border border-white bg-[#6C994E] px-5 py-4 text-white shadow-xl sm:block lg:-left-6">
+            {/* <div className="absolute -bottom-5 -left-3 hidden rounded-2xl border border-white bg-[#6C994E] px-5 py-4 text-white shadow-xl sm:block lg:-left-6">
               <div className="flex items-center gap-3">
                 <Sprout size={20} />
 
@@ -268,7 +268,7 @@ const About = () => {
                   </p>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
 
