@@ -3,7 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import PublicLayout from "../layouts/PublicLayout";
 
 import Home from "../pages/Home";
-// import AboutPage from "../pages/AboutPage";
+import AboutPage from "../pages/AboutPage";
 // import EcosystemPage from "../pages/EcosystemPage";
 // import ProjectsPage from "../pages/ProjectsPage";
 // import ProjectDetailsPage from "../pages/ProjectDetailsPage";
@@ -21,8 +21,8 @@ const AppRouter = () => {
     <Routes>
       <Route element={<PublicLayout />}>
         <Route path="/" element={<Home />} />
-        {/* <Route path="/about" element={<AboutPage />} />
-        <Route path="/ecosystem" element={<EcosystemPage />} />
+        <Route path="/about" element={<AboutPage />} />
+        {/* <Route path="/ecosystem" element={<EcosystemPage />} />
 
         <Route path="/projects" element={<ProjectsPage />} />
         <Route path="/projects/:slug" element={<ProjectDetailsPage />} />
