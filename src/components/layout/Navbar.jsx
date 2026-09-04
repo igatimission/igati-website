@@ -209,12 +209,12 @@ const Navbar = () => {
 
       {/* Mobile Navigation */}
       <div
-        className={`overflow-hidden border-t border-gray-100 bg-white transition-all duration-300 ease-in-out lg:hidden ${
-          mobileMenuOpen
-            ? "max-h-[1000px] opacity-100"
-            : "max-h-0 border-t-0 opacity-0"
-        }`}
-      >
+  className={`border-t border-gray-100 bg-white transition-all duration-300 ease-in-out lg:hidden ${
+    mobileMenuOpen
+      ? "max-h-[calc(100vh-90px)] overflow-y-auto opacity-100"
+      : "max-h-0 overflow-hidden border-t-0 opacity-0"
+  }`}
+>
         <nav className="mx-auto max-w-7xl px-4 py-5 sm:px-6">
           {/* Ecosystem Feature */}
           <Link
