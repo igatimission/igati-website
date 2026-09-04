@@ -248,7 +248,7 @@ const Hero = () => {
             </div>
 
             {/* Floating MUST card */}
-            <div className="absolute -bottom-6 -left-3 hidden max-w-[245px] rounded-2xl border border-white/10 bg-white p-4 text-[#073B4C] shadow-2xl sm:block lg:-left-8">
+            {/* <div className="absolute -bottom-6 -left-3 hidden max-w-[245px] rounded-2xl border border-white/10 bg-white p-4 text-[#073B4C] shadow-2xl sm:block lg:-left-8">
               <div className="flex items-start gap-3">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#6C994E]/10 text-[#6C994E]">
                   <GraduationCap size={19} />
@@ -268,10 +268,10 @@ const Hero = () => {
                   </p>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             {/* Floating network badge */}
-            <div className="absolute -right-3 top-10 hidden rounded-2xl border border-white/10 bg-[#6C994E] px-4 py-3 text-white shadow-xl sm:block lg:-right-6">
+            {/* <div className="absolute -right-3 top-10 hidden rounded-2xl border border-white/10 bg-[#6C994E] px-4 py-3 text-white shadow-xl sm:block lg:-right-6">
               <div className="flex items-center gap-2">
                 <Globe2 size={16} />
 
@@ -285,7 +285,7 @@ const Hero = () => {
                   </p>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
