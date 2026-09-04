@@ -37,7 +37,7 @@ const Navbar = () => {
               className="h-16 w-16 shrink-0 object-contain transition-transform duration-300 group-hover:scale-[1.03] sm:h-20 sm:w-20"
             />
 
-            <div className="hidden min-w-0 sm:block">
+            {/* <div className="hidden min-w-0 sm:block">
               <h1 className="text-base font-bold leading-tight tracking-wide text-[#073B4C] lg:text-lg">
                 IGATI
               </h1>
@@ -45,7 +45,7 @@ const Navbar = () => {
               <p className="text-[9px] font-semibold uppercase tracking-[0.16em] text-[#6C994E] lg:text-[10px]">
                 Global Mission Network
               </p>
-            </div>
+            </div> */}
           </Link>
 
           {/* Desktop Navigation */}
