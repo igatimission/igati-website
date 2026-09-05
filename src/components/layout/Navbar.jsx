@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+
 import {
   ArrowRight,
   BookOpen,
@@ -11,6 +12,7 @@ import {
 } from "lucide-react";
 
 import logo from "../../assets/logo.png";
+import mustLogo from "../../assets/must-logo.png";
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -23,48 +25,41 @@ const Navbar = () => {
 
   return (
     <header className="sticky top-0 z-50 border-b border-gray-100 bg-white/95 shadow-sm backdrop-blur-xl">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      {/* =========================================================
+          DESKTOP / MAIN NAVBAR
+      ========================================================== */}
+      <div className="mx-auto max-w-[1550px] px-4 sm:px-6 lg:px-6 xl:px-8">
         <div className="flex h-[90px] items-center justify-between lg:h-[105px]">
-          {/* Logo */}
+          {/* =====================================================
+              LEFT: IGATI LOGO
+          ====================================================== */}
           <Link
             to="/"
             onClick={closeMobileMenu}
-            className="group flex min-w-0 items-center gap-3"
+            className="group flex shrink-0 items-center"
+            aria-label="IGATI Global Mission Network"
           >
-            {/* <img
+            <img
               src={logo}
               alt="IGATI Global Mission Network"
-              className="h-16 w-16 shrink-0 object-contain transition-transform duration-300 group-hover:scale-[1.03] sm:h-20 sm:w-20"
-            /> */}
-            <img
-  src={logo}
-  alt="IGATI Global Mission Network"
-  className="h-20 w-20 shrink-0 object-contain transition-transform duration-300 group-hover:scale-[1.03] sm:h-24 sm:w-24 lg:h-28 lg:w-28"
-/>
-
-            {/* <div className="hidden min-w-0 sm:block">
-              <h1 className="text-base font-bold leading-tight tracking-wide text-[#073B4C] lg:text-lg">
-                IGATI
-              </h1>
-
-              <p className="text-[9px] font-semibold uppercase tracking-[0.16em] text-[#6C994E] lg:text-[10px]">
-                Global Mission Network
-              </p>
-            </div> */}
+              className="h-20 w-20 shrink-0 object-contain transition-transform duration-300 group-hover:scale-[1.03] sm:h-24 sm:w-24 lg:h-24 lg:w-24 xl:h-28 xl:w-28"
+            />
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden items-center gap-1 lg:flex">
+          {/* =====================================================
+              CENTER: DESKTOP NAVIGATION
+          ====================================================== */}
+          <nav className="hidden flex-1 items-center justify-center gap-0.5 lg:flex xl:gap-1">
             <Link
               to="/"
-              className="rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-[#F8FAF7] hover:text-[#073B4C]"
+              className="rounded-lg px-2.5 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-[#F8FAF7] hover:text-[#073B4C] xl:px-3"
             >
               Home
             </Link>
 
             <Link
               to="/about"
-              className="rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-[#F8FAF7] hover:text-[#073B4C]"
+              className="rounded-lg px-2.5 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-[#F8FAF7] hover:text-[#073B4C] xl:px-3"
             >
               About
             </Link>
@@ -72,14 +67,11 @@ const Navbar = () => {
             {/* Main Ecosystem Entry */}
             <Link
               to="/ecosystem"
-              className="group mx-1 inline-flex items-center gap-2 rounded-xl border border-[#6C994E]/20 bg-[#F4F8F0] px-4 py-2.5 text-sm font-bold text-[#073B4C] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#6C994E]/40 hover:bg-[#EDF5E7] hover:shadow-sm"
+              className="group mx-1 inline-flex items-center gap-2 rounded-xl border border-[#6C994E]/20 bg-[#F4F8F0] px-3 py-2.5 text-sm font-bold text-[#073B4C] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#6C994E]/40 hover:bg-[#EDF5E7] hover:shadow-sm xl:px-4"
             >
-              <Network
-                size={16}
-                className="text-[#6C994E]"
-              />
+              <Network size={16} className="text-[#6C994E]" />
 
-              Explore the Ecosystem
+              <span>Explore the Ecosystem</span>
 
               <ArrowRight
                 size={14}
@@ -89,21 +81,21 @@ const Navbar = () => {
 
             <Link
               to="/projects"
-              className="rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-[#F8FAF7] hover:text-[#073B4C]"
+              className="rounded-lg px-2.5 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-[#F8FAF7] hover:text-[#073B4C] xl:px-3"
             >
               Projects
             </Link>
 
             <Link
               to="/marketplace"
-              className="rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-[#F8FAF7] hover:text-[#073B4C]"
+              className="rounded-lg px-2.5 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-[#F8FAF7] hover:text-[#073B4C] xl:px-3"
             >
               Marketplace
             </Link>
 
             <Link
               to="/learn"
-              className="rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-[#F8FAF7] hover:text-[#073B4C]"
+              className="rounded-lg px-2.5 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-[#F8FAF7] hover:text-[#073B4C] xl:px-3"
             >
               Learn
             </Link>
@@ -112,7 +104,7 @@ const Navbar = () => {
             <div className="group relative">
               <button
                 type="button"
-                className="flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-[#F8FAF7] hover:text-[#073B4C]"
+                className="flex items-center gap-1 rounded-lg px-2.5 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-[#F8FAF7] hover:text-[#073B4C] xl:px-3"
               >
                 More
 
@@ -156,37 +148,64 @@ const Navbar = () => {
             </div>
           </nav>
 
-          {/* Desktop Actions */}
-          <div className="hidden items-center gap-2 xl:flex">
-            <Link
-              to="/login"
-              className="rounded-xl px-4 py-2.5 text-sm font-semibold text-[#073B4C] transition-colors hover:bg-gray-50"
-            >
-              Sign In
-            </Link>
+          {/* =====================================================
+              DESKTOP RIGHT SIDE
+          ====================================================== */}
+          <div className="hidden shrink-0 items-center gap-3 lg:flex">
+            {/* Actions - wider desktops */}
+            <div className="hidden items-center gap-2 xl:flex">
+              <Link
+                to="/login"
+                className="rounded-xl px-3 py-2.5 text-sm font-semibold text-[#073B4C] transition-colors hover:bg-gray-50"
+              >
+                Sign In
+              </Link>
 
-            <Link
-              to="/join"
-              className="group flex items-center gap-2 rounded-xl bg-[#073B4C] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#07505E] hover:shadow-md"
-            >
-              Join Network
+              <Link
+                to="/join"
+                className="group flex items-center gap-2 rounded-xl bg-[#073B4C] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#07505E] hover:shadow-md"
+              >
+                Join Network
 
-              <ArrowRight
-                size={16}
-                className="transition-transform duration-300 group-hover:translate-x-0.5"
+                <ArrowRight
+                  size={16}
+                  className="transition-transform duration-300 group-hover:translate-x-0.5"
+                />
+              </Link>
+            </div>
+
+            {/* Divider */}
+            <div className="hidden h-12 w-px bg-gray-200 xl:block" />
+
+            {/* MUST Logo */}
+            <a
+              href="https://www.must.ac.ke/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex shrink-0 items-center"
+              aria-label="Meru University of Science and Technology"
+            >
+              <img
+                src={mustLogo}
+                alt="Meru University of Science and Technology"
+                className="h-20 w-20 shrink-0 object-contain transition-transform duration-300 group-hover:scale-[1.03] lg:h-20 lg:w-20 xl:h-24 xl:w-24"
               />
-            </Link>
+            </a>
           </div>
 
-          {/* Tablet Join Button */}
+          {/* =====================================================
+              TABLET JOIN BUTTON
+          ====================================================== */}
           <Link
             to="/join"
-            className="ml-auto mr-2 hidden rounded-xl bg-[#073B4C] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#07505E] sm:block xl:hidden"
+            className="ml-auto mr-2 hidden rounded-xl bg-[#073B4C] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#07505E] sm:block lg:hidden"
           >
             Join Network
           </Link>
 
-          {/* Mobile Menu */}
+          {/* =====================================================
+              MOBILE MENU BUTTON
+          ====================================================== */}
           <button
             type="button"
             onClick={() => setMobileMenuOpen((prev) => !prev)}
@@ -207,15 +226,46 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile Navigation */}
+      {/* =========================================================
+          MOBILE NAVIGATION
+      ========================================================== */}
       <div
-  className={`border-t border-gray-100 bg-white transition-all duration-300 ease-in-out lg:hidden ${
-    mobileMenuOpen
-      ? "max-h-[calc(100vh-90px)] overflow-y-auto opacity-100"
-      : "max-h-0 overflow-hidden border-t-0 opacity-0"
-  }`}
->
+        className={`border-t border-gray-100 bg-white transition-all duration-300 ease-in-out lg:hidden ${
+          mobileMenuOpen
+            ? "max-h-[calc(100dvh-90px)] overflow-y-auto overscroll-contain opacity-100"
+            : "max-h-0 overflow-hidden border-t-0 opacity-0"
+        }`}
+      >
         <nav className="mx-auto max-w-7xl px-4 py-5 sm:px-6">
+          {/* Mobile institution logos */}
+          <div className="mb-5 flex items-center justify-between rounded-2xl border border-gray-100 bg-[#F8FAF7] px-4 py-3">
+            <div className="flex items-center gap-3">
+              <img
+                src={logo}
+                alt="IGATI Global Mission Network"
+                className="h-14 w-14 object-contain"
+              />
+
+              <div className="h-8 w-px bg-gray-200" />
+
+              <img
+                src={mustLogo}
+                alt="Meru University of Science and Technology"
+                className="h-12 w-12 object-contain"
+              />
+            </div>
+
+            <div className="text-right">
+              <p className="text-[8px] font-bold uppercase tracking-[0.12em] text-[#6C994E]">
+                University–Community
+              </p>
+
+              <p className="mt-1 text-[9px] font-semibold text-[#073B4C]">
+                MUST–IGATI
+              </p>
+            </div>
+          </div>
+
           {/* Ecosystem Feature */}
           <Link
             to="/ecosystem"
@@ -226,10 +276,7 @@ const Navbar = () => {
 
             <div className="relative">
               <div className="flex items-center gap-2">
-                <Network
-                  size={16}
-                  className="text-[#F2B632]"
-                />
+                <Network size={16} className="text-[#F2B632]" />
 
                 <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#F2B632]">
                   Explore the Ecosystem
@@ -297,10 +344,7 @@ const Navbar = () => {
             >
               <span>Learn</span>
 
-              <BookOpen
-                size={15}
-                className="text-gray-400"
-              />
+              <BookOpen size={15} className="text-gray-400" />
             </Link>
 
             {/* More */}
@@ -380,6 +424,7 @@ const Navbar = () => {
               className="flex items-center justify-center gap-2 rounded-xl bg-[#073B4C] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#07505E]"
             >
               Join the Network
+
               <ArrowRight size={16} />
             </Link>
           </div>

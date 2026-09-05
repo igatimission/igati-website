@@ -45,7 +45,7 @@ const TopBanner = () => {
               </span>
 
               <span className="text-[11px] font-semibold text-white">
-                MUST RICE
+                Meru University of Science and Technology - RICE
               </span>
             </div>
 
@@ -75,7 +75,7 @@ const TopBanner = () => {
               />
 
               <span className="text-[11px]">
-                Global Mission Network
+                Igati Global Mission Network
               </span>
             </div>
           </div>
