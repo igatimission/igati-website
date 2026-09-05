@@ -79,12 +79,12 @@ const Navbar = () => {
               />
             </Link>
 
-            <Link
+            {/* <Link
               to="/projects"
               className="rounded-lg px-2.5 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-[#F8FAF7] hover:text-[#073B4C] xl:px-3"
             >
               Projects
-            </Link>
+            </Link> */}
 
             <Link
               to="/marketplace"
@@ -94,11 +94,25 @@ const Navbar = () => {
             </Link>
 
             <Link
+              to="/our-stories"
+              className="rounded-lg px-2.5 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-[#F8FAF7] hover:text-[#073B4C] xl:px-3"
+            >
+              Our stories
+            </Link>
+
+            <Link
+              to="/impact"
+              className="rounded-lg px-2.5 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-[#F8FAF7] hover:text-[#073B4C] xl:px-3"
+            >
+              Impact
+            </Link>
+
+            {/* <Link
               to="/learn"
               className="rounded-lg px-2.5 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-[#F8FAF7] hover:text-[#073B4C] xl:px-3"
             >
               Learn
-            </Link>
+            </Link> */}
 
             {/* More Dropdown */}
             <div className="group relative">
@@ -131,13 +145,6 @@ const Navbar = () => {
                   </Link>
 
                   <a
-                    href="/#impact"
-                    className="block rounded-xl px-4 py-3 text-sm font-medium text-gray-600 transition-colors hover:bg-[#F8FAF7] hover:text-[#073B4C]"
-                  >
-                    Impact
-                  </a>
-
-                  <a
                     href="/#contact"
                     className="block rounded-xl px-4 py-3 text-sm font-medium text-gray-600 transition-colors hover:bg-[#F8FAF7] hover:text-[#073B4C]"
                   >
@@ -154,12 +161,12 @@ const Navbar = () => {
           <div className="hidden shrink-0 items-center gap-3 lg:flex">
             {/* Actions - wider desktops */}
             <div className="hidden items-center gap-2 xl:flex">
-              <Link
+              {/* <Link
                 to="/login"
                 className="rounded-xl px-3 py-2.5 text-sm font-semibold text-[#073B4C] transition-colors hover:bg-gray-50"
               >
                 Sign In
-              </Link>
+              </Link> */}
 
               <Link
                 to="/join"
@@ -321,13 +328,13 @@ const Navbar = () => {
               About IGATI
             </Link>
 
-            <Link
+            {/* <Link
               to="/projects"
               onClick={closeMobileMenu}
               className="border-b border-gray-100 py-3.5 text-sm font-medium text-gray-700 transition-colors hover:text-[#07505E]"
             >
               Projects
-            </Link>
+            </Link> */}
 
             <Link
               to="/marketplace"
@@ -338,6 +345,26 @@ const Navbar = () => {
             </Link>
 
             <Link
+              to="/our-stories"
+              onClick={closeMobileMenu}
+              className="border-b border-gray-100 py-3.5 text-sm font-medium text-gray-700 transition-colors hover:text-[#07505E]"
+            >
+              Our Stories
+            </Link>
+
+
+            <Link
+              to="/impact"
+              onClick={closeMobileMenu}
+              className="border-b border-gray-100 py-3.5 text-sm font-medium text-gray-700 transition-colors hover:text-[#07505E]"
+            >
+              Impact
+            </Link>
+
+
+            
+
+            {/* <Link
               to="/learn"
               onClick={closeMobileMenu}
               className="flex items-center justify-between border-b border-gray-100 py-3.5 text-sm font-medium text-gray-700 transition-colors hover:text-[#07505E]"
@@ -345,7 +372,7 @@ const Navbar = () => {
               <span>Learn</span>
 
               <BookOpen size={15} className="text-gray-400" />
-            </Link>
+            </Link> */}
 
             {/* More */}
             <div className="border-b border-gray-100">
@@ -389,14 +416,6 @@ const Navbar = () => {
                   </Link>
 
                   <a
-                    href="/#impact"
-                    onClick={closeMobileMenu}
-                    className="block py-2.5 text-sm text-gray-600"
-                  >
-                    Impact
-                  </a>
-
-                  <a
                     href="/#contact"
                     onClick={closeMobileMenu}
                     className="block py-2.5 text-sm text-gray-600"
@@ -410,13 +429,13 @@ const Navbar = () => {
 
           {/* Mobile Actions */}
           <div className="mt-5 grid gap-3 sm:grid-cols-2">
-            <Link
+            {/* <Link
               to="/login"
               onClick={closeMobileMenu}
               className="flex items-center justify-center rounded-xl border border-[#073B4C] px-5 py-3 text-sm font-semibold text-[#073B4C] transition-colors hover:bg-[#F8FAF7]"
             >
               Sign In
-            </Link>
+            </Link> */}
 
             <Link
               to="/join"
