@@ -26,10 +26,6 @@ const Hero = () => {
       label: "Innovation",
     },
     {
-      icon: Rocket,
-      label: "Enterprise",
-    },
-    {
       icon: Handshake,
       label: "Partnership",
     },
@@ -88,9 +84,11 @@ const Hero = () => {
 
             {/* Main positioning */}
             <p className="mt-6 max-w-2xl text-base leading-8 text-white/70 sm:text-lg lg:text-xl lg:leading-9">
-              IGATI Global Mission Network is a university–community ecosystem
-              connecting people, research, innovation, entrepreneurship,
-              enterprises, markets and community impact.
+              IGATI Global Mission Network is a startup social entrepreneurship connecting communities, students,
+              researchers, innovators, entrepreneurs, enterprises,
+              institutions, government, industry, investors and development
+              partners around practical solutions for social and economic
+              transformation.
             </p>
 
             {/* Supporting statement */}
@@ -184,7 +182,6 @@ const Hero = () => {
                     "Research & Knowledge",
                     "Innovation",
                     "Entrepreneurship",
-                    "Enterprise & Market",
                     "Community Impact",
                   ].map((step, index, array) => (
                     <div key={step}>

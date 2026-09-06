@@ -99,7 +99,7 @@ const About = () => {
 
             <div className="mt-6 space-y-5 text-sm leading-7 text-gray-600 sm:text-base sm:leading-8">
               <p>
-                IGATI Global Mission Network is a growing ecosystem connecting
+                IGATI Global Mission Network is a startup social-entrepreneurship connecting
                 communities, students, researchers, innovators, entrepreneurs,
                 enterprises, institutions, government, industry, investors and
                 development partners around practical solutions for social and
