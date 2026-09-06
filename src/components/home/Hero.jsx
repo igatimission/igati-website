@@ -73,15 +73,18 @@ const Hero = () => {
             </div>
 
             {/* Heading */}
-            <h1 className="mt-6 text-4xl font-bold leading-[1.08] tracking-tight sm:text-5xl lg:text-[58px] xl:text-[64px]">
-              Connecting People,
-              <span className="block text-[#F2B632]">
-                Knowledge & Enterprise
-              </span>
-              <span className="block">
-                for Community Impact.
-              </span>
-            </h1>
+<h1 className="mt-6 text-4xl font-bold leading-[1.08] tracking-tight sm:text-5xl lg:text-[58px] xl:text-[64px]">
+  Connecting People,
+  <span className="block text-[#F2B632]">
+    Research & Knowledge,
+  </span>
+  <span className="block">
+    Entrepreneurship & Social Entrepreneurship
+  </span>
+  <span className="mt-2 block text-[#9BC36B]">
+    for Socio-Economic Transformation.
+  </span>
+</h1>
 
             {/* Main positioning */}
             <p className="mt-6 max-w-2xl text-base leading-8 text-white/70 sm:text-lg lg:text-xl lg:leading-9">

@@ -61,7 +61,7 @@ const Navbar = () => {
               to="/about"
               className="rounded-lg px-2.5 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-[#F8FAF7] hover:text-[#073B4C] xl:px-3"
             >
-              About
+              About Us
             </Link>
 
             {/* Main Ecosystem Entry */}
@@ -90,22 +90,17 @@ const Navbar = () => {
               to="/marketplace"
               className="rounded-lg px-2.5 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-[#F8FAF7] hover:text-[#073B4C] xl:px-3"
             >
-              Marketplace
+              Marketplace & Exchange
             </Link>
 
             <Link
-              to="/our-stories"
+              to="/marketplace"
               className="rounded-lg px-2.5 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-[#F8FAF7] hover:text-[#073B4C] xl:px-3"
             >
-              Our stories
+              Partnership & Investment
             </Link>
 
-            <Link
-              to="/impact"
-              className="rounded-lg px-2.5 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-[#F8FAF7] hover:text-[#073B4C] xl:px-3"
-            >
-              Impact
-            </Link>
+
 
             {/* <Link
               to="/learn"
@@ -131,10 +126,10 @@ const Navbar = () => {
               <div className="invisible absolute right-0 top-full z-50 w-56 translate-y-2 pt-2 opacity-0 transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
                 <div className="rounded-2xl border border-gray-100 bg-white p-2 shadow-xl">
                   <Link
-                    to="/opportunities"
+                    to="/media_stories"
                     className="block rounded-xl px-4 py-3 text-sm font-medium text-gray-600 transition-colors hover:bg-[#F8FAF7] hover:text-[#073B4C]"
                   >
-                    Opportunities
+                    Media & Our Stories
                   </Link>
 
                   <Link
@@ -325,7 +320,7 @@ const Navbar = () => {
               onClick={closeMobileMenu}
               className="border-b border-gray-100 py-3.5 text-sm font-medium text-gray-700 transition-colors hover:text-[#07505E]"
             >
-              About IGATI
+              About Us
             </Link>
 
             {/* <Link
@@ -341,25 +336,24 @@ const Navbar = () => {
               onClick={closeMobileMenu}
               className="border-b border-gray-100 py-3.5 text-sm font-medium text-gray-700 transition-colors hover:text-[#07505E]"
             >
-              Marketplace
+              Marketplace & Exchange
             </Link>
 
             <Link
+              to="/marketplace"
+              onClick={closeMobileMenu}
+              className="border-b border-gray-100 py-3.5 text-sm font-medium text-gray-700 transition-colors hover:text-[#07505E]"
+            >
+              Partnership & Investment
+            </Link>
+
+            {/* <Link
               to="/our-stories"
               onClick={closeMobileMenu}
               className="border-b border-gray-100 py-3.5 text-sm font-medium text-gray-700 transition-colors hover:text-[#07505E]"
             >
-              Our Stories
-            </Link>
-
-
-            <Link
-              to="/impact"
-              onClick={closeMobileMenu}
-              className="border-b border-gray-100 py-3.5 text-sm font-medium text-gray-700 transition-colors hover:text-[#07505E]"
-            >
-              Impact
-            </Link>
+              Media & Our Stories
+            </Link> */}
 
 
             
@@ -400,11 +394,11 @@ const Navbar = () => {
               >
                 <div className="ml-3 border-l-2 border-[#6C994E]/20 pl-4">
                   <Link
-                    to="/opportunities"
+                    to="/media_stories"
                     onClick={closeMobileMenu}
                     className="block py-2.5 text-sm text-gray-600"
                   >
-                    Opportunities
+                    Media & Our Stories
                   </Link>
 
                   <Link

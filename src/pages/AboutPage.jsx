@@ -132,7 +132,7 @@ const AboutPage = () => {
               <strong className="font-semibold text-white">
                 IGATI Global Mission Network
               </strong>{" "}
-              is a growing ecosystem connecting communities, students,
+              is a startup social entrepreneurship connecting communities, students,
               researchers, innovators, entrepreneurs, enterprises,
               institutions, government, industry, investors and development
               partners around practical solutions for social and economic
@@ -205,7 +205,7 @@ const AboutPage = () => {
                 <strong className="font-semibold text-[#073B4C]">
                   IGATI Global Mission Network
                 </strong>{" "}
-                is a growing ecosystem connecting communities, students,
+                is a startup social entrepreneurship connecting communities, students,
                 researchers, innovators, entrepreneurs, enterprises,
                 institutions, government, industry, investors and development
                 partners around practical solutions for social and economic
