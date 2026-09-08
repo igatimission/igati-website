@@ -1,4 +1,9 @@
-import { useMemo, useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+
 import { Link } from "react-router-dom";
 
 import {
@@ -18,6 +23,7 @@ import {
   Landmark,
   Leaf,
   Lightbulb,
+  LoaderCircle,
   MapPin,
   Network,
   Search,
@@ -28,14 +34,113 @@ import {
   Wheat,
 } from "lucide-react";
 
+import { ecosystemApi } from "../services/api";
+
 const EcosystemPage = () => {
+  // =========================================================
+  // UI STATE
+  // =========================================================
+
   const [activeGeo, setActiveGeo] = useState("Meru County");
+
   const [selectedNode, setSelectedNode] = useState("Communities");
-  const [selectedLab, setSelectedLab] = useState(
-    "One Million Productive Bee Hives"
-  );
+
+  const [selectedLab, setSelectedLab] = useState(null);
+
   const [selectedIdentity, setSelectedIdentity] = useState("Farmer");
-  const [selectedTheme, setSelectedTheme] = useState("Agriculture & Food Systems");
+
+  const [selectedTheme, setSelectedTheme] = useState(null);
+
+  const [projectSearch, setProjectSearch] = useState("");
+
+  // =========================================================
+  // BACKEND DATA
+  // =========================================================
+
+  const [themes, setThemes] = useState([]);
+
+  const [locations, setLocations] = useState([]);
+
+  const [communities, setCommunities] = useState([]);
+
+  const [labs, setLabs] = useState([]);
+
+  const [projects, setProjects] = useState([]);
+
+  const [people, setPeople] = useState([]);
+
+  const [matchedPeople, setMatchedPeople] = useState([]);
+
+  const [organisations, setOrganisations] = useState([]);
+
+  const [programmes, setProgrammes] = useState([]);
+
+  const [research, setResearch] = useState([]);
+
+  const [markets, setMarkets] = useState([]);
+
+  const [innovations, setInnovations] = useState([]);
+
+  const [knowledgeOutputs, setKnowledgeOutputs] = useState([]);
+
+  const [opportunities, setOpportunities] = useState([]);
+
+  const [impact, setImpact] = useState([]);
+
+
+  // =========================================================
+  // LOADING / ERROR
+  // =========================================================
+
+  const [loading, setLoading] = useState(true);
+
+  const [error, setError] = useState(null);
+
+
+  // =========================================================
+  // ICON MAP
+  // Backend sends names/data.
+  // React still decides which Lucide icon to render.
+  // =========================================================
+
+  const themeIconMap = {
+    "Agriculture & Food Systems": Wheat,
+
+    "Apiculture & Environmental Sustainability": Leaf,
+
+    "Value Addition & Manufacturing": Factory,
+
+    "Social Entrepreneurship & Enterprise Development": Building2,
+
+    "Youth & Young Mothers": Users,
+
+    "Innovation, Technology & Digital Transformation": Lightbulb,
+
+    "Research, Knowledge & Learning": Telescope,
+
+    "Partnerships, Investment & Resource Mobilisation": Handshake,
+
+    "Markets & Exchange": CircleDollarSign,
+
+    "Community & Global Transformation": Globe2,
+  };
+
+
+  const labIconMap = {
+    "One Million Productive Bee Hives": Leaf,
+    "Smart Agriculture": Wheat,
+    "Value Addition & Manufacturing": Factory,
+    "Social Entrepreneurship": HeartHandshake,
+    "Young Mothers Social Enterprise": HandHeart,
+    "Innovation & Technology": Lightbulb,
+    "Research & Knowledge": Telescope,
+    "Emerging Living Laboratories": Sprout,
+  };
+
+
+  // =========================================================
+  // SCROLL
+  // =========================================================
 
   const scrollToSection = (id) => {
     document.getElementById(id)?.scrollIntoView({
@@ -44,309 +149,196 @@ const EcosystemPage = () => {
     });
   };
 
-  const themes = [
-    {
-      name: "Agriculture & Food Systems",
-      icon: Wheat,
-      description:
-        "Smart agriculture, farmer clusters, apiculture, food production and sustainable value chains.",
-    },
-    {
-      name: "Apiculture & Environmental Sustainability",
-      icon: Leaf,
-      description:
-        "One Million Productive Bee Hives, biodiversity, livelihoods and community conservation.",
-    },
-    {
-      name: "Value Addition & Manufacturing",
-      icon: Factory,
-      description:
-        "Processing, product development, standards, branding, packaging and commercialization.",
-    },
-    {
-      name: "Social Entrepreneurship & Enterprise Development",
-      icon: Building2,
-      description:
-        "Turning community challenges into enterprises, jobs, livelihoods and scalable solutions.",
-    },
-    {
-      name: "Youth & Young Mothers",
-      icon: Users,
-      description:
-        "Social enterprise, skills development, entrepreneurship and economic empowerment.",
-    },
-    {
-      name: "Innovation, Technology & Digital Transformation",
-      icon: Lightbulb,
-      description:
-        "Technology-enabled solutions, digital platforms and community technologies.",
-    },
-    {
-      name: "Research, Knowledge & Learning",
-      icon: Telescope,
-      description:
-        "Research, community knowledge, evidence, publications, experimentation and new knowledge.",
-    },
-    {
-      name: "Partnerships, Investment & Resource Mobilisation",
-      icon: Handshake,
-      description:
-        "Connecting ecosystem needs with institutions, investors, donors and strategic partners.",
-    },
-    {
-      name: "Markets & Exchange",
-      icon: CircleDollarSign,
-      description:
-        "Connecting producers, enterprises, buyers, consumers and value-chain actors.",
-    },
-    {
-      name: "Community & Global Transformation",
-      icon: Globe2,
-      description:
-        "Local community action connected to the wider African and global IGATI Mission Network.",
-    },
-  ];
 
-  const geography = [
-    {
-      name: "Africa",
-      description:
-        "The wider continental network through which local ecosystems can connect, collaborate and scale.",
-    },
-    {
-      name: "Kenya",
-      description:
-        "The national context connecting community action, research, enterprise and partnership.",
-    },
-    {
-      name: "Meru County",
-      description:
-        "The current geographic home of the flagship MUST–IGATI Community Ecosystem.",
-    },
-    {
-      name: "MUST–IGATI Community Ecosystem",
-      description:
-        "A university-community ecosystem connecting knowledge, communities, enterprise, innovation and opportunity.",
-    },
-    {
-      name: "Emerging Ecosystems",
-      description:
-        "Future community ecosystems that can be connected to the wider IGATI Global Mission Network.",
-    },
-  ];
+  // =========================================================
+  // LOAD INITIAL ECOSYSTEM DATA
+  // =========================================================
 
-  const ecosystemNodes = [
-    {
-      name: "Communities",
-      icon: Users,
-      description:
-        "Community challenges, needs, knowledge, opportunities and participation form the starting point.",
-      connectsTo: ["Projects", "People", "Research", "Impact"],
-    },
-    {
-      name: "Projects",
-      icon: Target,
-      description:
-        "Projects translate community challenges into practical interventions and action.",
-      connectsTo: ["Communities", "Programmes", "People", "Opportunities"],
-    },
-    {
-      name: "Programmes",
-      icon: BookOpen,
-      description:
-        "Programmes coordinate long-term interventions, training, learning and community transformation.",
-      connectsTo: ["Projects", "Institutions", "People", "Impact"],
-    },
-    {
-      name: "People",
-      icon: Users,
-      description:
-        "Farmers, students, researchers, entrepreneurs, mentors, investors and partners make the ecosystem work.",
-      connectsTo: ["Projects", "Institutions", "Opportunities", "Research"],
-    },
-    {
-      name: "Institutions",
-      icon: Landmark,
-      description:
-        "Universities, community organisations, government, NGOs, businesses and partners contribute capabilities.",
-      connectsTo: ["People", "Research", "Enterprises", "Opportunities"],
-    },
-    {
-      name: "Enterprises",
-      icon: Building2,
-      description:
-        "Enterprises create livelihoods and connect practical solutions with sustainable economic activity.",
-      connectsTo: ["Innovations", "Markets", "People", "Impact"],
-    },
-    {
-      name: "Innovations",
-      icon: Lightbulb,
-      description:
-        "Technologies, products, processes and social innovations emerge from practical challenges and knowledge.",
-      connectsTo: ["Research", "Enterprises", "Projects", "Impact"],
-    },
-    {
-      name: "Research",
-      icon: Telescope,
-      description:
-        "Research connects university knowledge and community realities to evidence, experimentation and learning.",
-      connectsTo: ["Innovations", "Communities", "People", "Knowledge"],
-    },
-    {
-      name: "Opportunities",
-      icon: CircleDollarSign,
-      description:
-        "Training, funding, research, partnerships, mentorship, markets and investment opportunities.",
-      connectsTo: ["People", "Projects", "Institutions", "Enterprises"],
-    },
-    {
-      name: "Impact",
-      icon: Sprout,
-      description:
-        "The ecosystem ultimately seeks sustainable community and socio-economic transformation.",
-      connectsTo: ["Communities", "Projects", "Enterprises", "Research"],
-    },
-  ];
+  useEffect(() => {
+    const loadEcosystem = async () => {
+      try {
+        setLoading(true);
+        setError(null);
 
-  const labs = [
-    {
-      name: "One Million Productive Bee Hives",
-      icon: Leaf,
-      tagline: "Flagship Living Laboratory",
-      description:
-        "A flagship living laboratory connecting farmers, community participation, training, research, innovation, value chains, enterprise, markets, investment and impact.",
-      journey: [
-        "Challenge",
-        "Community",
-        "Intervention",
-        "People & Partners",
-        "Innovation",
-        "Enterprise / Value Chain",
-        "Research & Learning",
-        "Investment / Resources",
-        "Results & Impact",
-        "Scale",
-      ],
-    },
-    {
-      name: "Smart Agriculture",
-      icon: Wheat,
-      tagline: "Agriculture Living Laboratory",
-      description:
-        "A living laboratory connecting farmers, knowledge, production, innovation, value addition, markets and enterprise.",
-      journey: [
-        "Challenge",
-        "Community",
-        "Intervention",
-        "Research",
-        "Production",
-        "Value Addition",
-        "Market",
-        "Impact",
-      ],
-    },
-    {
-      name: "Value Addition & Manufacturing",
-      icon: Factory,
-      tagline: "Enterprise Living Laboratory",
-      description:
-        "Connecting resources and production with processing, standards, product development, branding and commercialization.",
-      journey: [
-        "Resource",
-        "Product",
-        "Compliance",
-        "Brand",
-        "Market",
-        "Enterprise",
-        "Scale",
-      ],
-    },
-    {
-      name: "Social Entrepreneurship",
-      icon: HeartHandshake,
-      tagline: "Social Enterprise Living Laboratory",
-      description:
-        "Turning social and community challenges into practical enterprise pathways, livelihoods and sustainable solutions.",
-      journey: [
-        "Challenge",
-        "Training",
-        "Mentorship",
-        "Incubation",
-        "Enterprise",
-        "Market",
-        "Income",
-        "Impact",
-      ],
-    },
-    {
-      name: "Young Mothers Social Enterprise",
-      icon: HandHeart,
-      tagline: "Economic Empowerment",
-      description:
-        "A social-enterprise pathway focused on skills, entrepreneurship, dignity, livelihoods and economic participation.",
-      journey: [
-        "Identify",
-        "Mentor",
-        "Train",
-        "Incubate",
-        "Create",
-        "Enterprise",
-        "Income",
-      ],
-    },
-    {
-      name: "Innovation & Technology",
-      icon: Lightbulb,
-      tagline: "Innovation Living Laboratory",
-      description:
-        "Testing technology-enabled solutions and practical innovations in real community environments.",
-      journey: [
-        "Challenge",
-        "Research",
-        "Prototype",
-        "Test",
-        "Innovate",
-        "Commercialize",
-        "Scale",
-      ],
-    },
-    {
-      name: "Research & Knowledge",
-      icon: Telescope,
-      tagline: "Knowledge Living Laboratory",
-      description:
-        "Connecting research, academic knowledge, community knowledge, experimentation, evidence and learning.",
-      journey: [
-        "Community Challenge",
-        "Research",
-        "Evidence",
-        "Innovation",
-        "Learning",
-        "Knowledge Output",
-        "Impact",
-      ],
-    },
-    {
-      name: "Emerging Living Laboratories",
-      icon: Sprout,
-      tagline: "Future Ecosystems",
-      description:
-        "A flexible pathway for onboarding future living laboratories without redesigning the ecosystem platform.",
-      journey: [
-        "Challenge",
-        "Community",
-        "Intervention",
-        "People",
-        "Innovation",
-        "Resources",
-        "Impact",
-      ],
-    },
-  ];
+        const [
+          overviewResponse,
+          locationsResponse,
+          communitiesResponse,
+          peopleResponse,
+          organisationsResponse,
+          programmesResponse,
+          researchResponse,
+          innovationsResponse,
+          knowledgeResponse,
+          marketsResponse,
+          impactResponse,
+        ] = await Promise.all([
+          ecosystemApi.overview(),
+          ecosystemApi.locations(),
+          ecosystemApi.communities(),
+          ecosystemApi.people(),
+          ecosystemApi.organisations(),
+          ecosystemApi.programmes(),
+          ecosystemApi.research(),
+          ecosystemApi.innovations(),
+          ecosystemApi.knowledge(),
+          ecosystemApi.markets(),
+          ecosystemApi.impact("?verified=true"),
+        ]);
+
+        const loadedThemes =
+          overviewResponse?.themes || [];
+
+        const loadedLabs =
+          overviewResponse?.living_laboratories || [];
+
+        const loadedProjects =
+          overviewResponse?.projects || [];
+
+        const loadedOpportunities =
+          overviewResponse?.opportunities || [];
+
+
+        setThemes(loadedThemes);
+
+        setLabs(loadedLabs);
+
+        setProjects(loadedProjects);
+
+        setOpportunities(loadedOpportunities);
+
+        setLocations(
+          locationsResponse?.locations || []
+        );
+
+        setCommunities(
+          communitiesResponse?.communities || []
+        );
+
+        const loadedPeople =
+          peopleResponse?.people || [];
+
+        setPeople(loadedPeople);
+
+        setMatchedPeople(
+          loadedPeople.filter(
+            (person) => person.person_type === "farmer"
+          )
+        );
+
+        setOrganisations(
+          organisationsResponse?.organisations || []
+        );
+
+        setProgrammes(
+          programmesResponse?.programmes || []
+        );
+
+        setResearch(
+          researchResponse?.research || []
+        );
+
+        setInnovations(
+          innovationsResponse?.innovations || []
+        );
+
+        setKnowledgeOutputs(
+          knowledgeResponse?.knowledge || []
+        );
+
+        setMarkets(
+          marketsResponse?.markets || []
+        );
+
+        setImpact(
+          impactResponse?.impact || []
+        );
+
+
+        if (loadedThemes.length > 0) {
+          setSelectedTheme(loadedThemes[0].name);
+        }
+
+        if (loadedLabs.length > 0) {
+          setSelectedLab(loadedLabs[0].slug);
+        }
+      } catch (err) {
+        console.error(
+          "Failed to load ecosystem:",
+          err
+        );
+
+        setError(
+          err.message ||
+            "Unable to load ecosystem information."
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadEcosystem();
+  }, []);
+
+
+  // =========================================================
+  // PROJECT SEARCH
+  // =========================================================
+
+  useEffect(() => {
+    const timer = setTimeout(async () => {
+      try {
+        let query = "?";
+
+        if (projectSearch.trim()) {
+          query += `search=${encodeURIComponent(
+            projectSearch.trim()
+          )}&`;
+        }
+
+        const currentThemeObject =
+          themes.find(
+            (theme) =>
+              theme.name === selectedTheme
+          );
+
+        if (currentThemeObject?.slug) {
+          query += `theme=${encodeURIComponent(
+            currentThemeObject.slug
+          )}&`;
+        }
+
+        const response =
+          await ecosystemApi.projects(query);
+
+        setProjects(response?.projects || []);
+      } catch (err) {
+        console.error(
+          "Project search failed:",
+          err
+        );
+      }
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [
+    projectSearch,
+    selectedTheme,
+    themes,
+  ]);
+
+
+  // =========================================================
+  // IDENTITY DEFINITIONS
+  //
+  // These are UI personas rather than CMS records,
+  // so keeping these client-side is appropriate.
+  // =========================================================
 
   const identities = [
     {
       name: "Farmer",
+      apiType: "farmer",
       icon: Wheat,
       recommendations: [
         "Living Laboratories",
@@ -355,8 +347,10 @@ const EcosystemPage = () => {
         "Markets & Exchange",
       ],
     },
+
     {
       name: "Student",
+      apiType: "student",
       icon: GraduationCap,
       recommendations: [
         "Research Opportunities",
@@ -365,8 +359,10 @@ const EcosystemPage = () => {
         "Living Laboratories",
       ],
     },
+
     {
       name: "Researcher",
+      apiType: "researcher",
       icon: Telescope,
       recommendations: [
         "Research Questions",
@@ -375,8 +371,10 @@ const EcosystemPage = () => {
         "Knowledge Outputs",
       ],
     },
+
     {
       name: "Entrepreneur",
+      apiType: "entrepreneur",
       icon: Building2,
       recommendations: [
         "Enterprise Development",
@@ -385,8 +383,10 @@ const EcosystemPage = () => {
         "Partnership Opportunities",
       ],
     },
+
     {
       name: "Innovator",
+      apiType: "innovator",
       icon: Lightbulb,
       recommendations: [
         "Innovation Labs",
@@ -395,8 +395,10 @@ const EcosystemPage = () => {
         "Enterprise Opportunities",
       ],
     },
+
     {
       name: "Investor",
+      apiType: "investor",
       icon: CircleDollarSign,
       recommendations: [
         "Investment Opportunities",
@@ -405,8 +407,10 @@ const EcosystemPage = () => {
         "Impact Pathways",
       ],
     },
+
     {
       name: "Partner",
+      apiType: "partner",
       icon: Handshake,
       recommendations: [
         "Partnership Opportunities",
@@ -415,8 +419,10 @@ const EcosystemPage = () => {
         "Resource Mobilisation",
       ],
     },
+
     {
       name: "Organisation",
+      apiType: "organisation",
       icon: Landmark,
       recommendations: [
         "Collaboration",
@@ -425,8 +431,10 @@ const EcosystemPage = () => {
         "Partnerships",
       ],
     },
+
     {
       name: "Community Member",
+      apiType: "community_member",
       icon: Users,
       recommendations: [
         "Community Projects",
@@ -437,61 +445,362 @@ const EcosystemPage = () => {
     },
   ];
 
+
+  // =========================================================
+  // ECOSYSTEM NODE UI
+  // =========================================================
+
+  const ecosystemNodes = [
+    {
+      name: "Communities",
+      icon: Users,
+      description:
+        "Community challenges, needs, knowledge, opportunities and participation form the starting point.",
+      connectsTo: [
+        "Projects",
+        "People",
+        "Research",
+        "Impact",
+      ],
+      count: communities.length,
+    },
+
+    {
+      name: "Projects",
+      icon: Target,
+      description:
+        "Projects translate community challenges into practical interventions and action.",
+      connectsTo: [
+        "Communities",
+        "Programmes",
+        "People",
+        "Opportunities",
+      ],
+      count: projects.length,
+    },
+
+    {
+      name: "Programmes",
+      icon: BookOpen,
+      description:
+        "Programmes coordinate long-term interventions, training, learning and community transformation.",
+      connectsTo: [
+        "Projects",
+        "Institutions",
+        "People",
+        "Impact",
+      ],
+      count: programmes.length,
+    },
+
+    {
+      name: "People",
+      icon: Users,
+      description:
+        "Farmers, students, researchers, entrepreneurs, mentors, investors and partners make the ecosystem work.",
+      connectsTo: [
+        "Projects",
+        "Institutions",
+        "Opportunities",
+        "Research",
+      ],
+      count: people.length,
+    },
+
+    {
+      name: "Institutions",
+      icon: Landmark,
+      description:
+        "Universities, community organisations, government, NGOs, businesses and partners contribute capabilities.",
+      connectsTo: [
+        "People",
+        "Research",
+        "Enterprises",
+        "Opportunities",
+      ],
+      count: organisations.length,
+    },
+
+    {
+      name: "Enterprises",
+      icon: Building2,
+      description:
+        "Enterprises create livelihoods and connect practical solutions with sustainable economic activity.",
+      connectsTo: [
+        "Innovations",
+        "Markets",
+        "People",
+        "Impact",
+      ],
+      count: organisations.filter(
+        (organisation) =>
+          organisation.organisation_type ===
+          "enterprise"
+      ).length,
+    },
+
+    {
+      name: "Innovations",
+      icon: Lightbulb,
+      description:
+        "Technologies, products, processes and social innovations emerge from practical challenges and knowledge.",
+      connectsTo: [
+        "Research",
+        "Enterprises",
+        "Projects",
+        "Impact",
+      ],
+      count: innovations.length,
+    },
+
+    {
+      name: "Research",
+      icon: Telescope,
+      description:
+        "Research connects university knowledge and community realities to evidence, experimentation and learning.",
+      connectsTo: [
+        "Innovations",
+        "Communities",
+        "People",
+        "Impact",
+      ],
+      count: research.length,
+    },
+
+    {
+      name: "Opportunities",
+      icon: CircleDollarSign,
+      description:
+        "Training, funding, research, partnerships, mentorship, markets and investment opportunities.",
+      connectsTo: [
+        "People",
+        "Projects",
+        "Institutions",
+        "Enterprises",
+      ],
+      count: opportunities.length,
+    },
+
+    {
+      name: "Impact",
+      icon: Sprout,
+      description:
+        "The ecosystem ultimately seeks sustainable community and socio-economic transformation.",
+      connectsTo: [
+        "Communities",
+        "Projects",
+        "Enterprises",
+        "Research",
+      ],
+      count: impact.length,
+    },
+  ];
+
+
+  // =========================================================
+  // GEOGRAPHY
+  // =========================================================
+
+  const geography = useMemo(() => {
+    if (!locations.length) {
+      return [];
+    }
+
+    return locations.map((location) => ({
+      id: location.id,
+      name: location.name,
+      slug: location.slug,
+      description:
+        location.description ||
+        `${location.name} is part of the IGATI ecosystem.`,
+      location_type:
+        location.location_type,
+    }));
+  }, [locations]);
+
+
+  // =========================================================
+  // KNOWLEDGE STREAM UI
+  // =========================================================
+
   const knowledgeStreams = [
     {
       title: "Research",
       icon: Telescope,
       text: "Research projects, student research, academic research and community research.",
+      count: research.length,
     },
+
     {
       title: "Innovation",
       icon: Lightbulb,
       text: "Technologies, products, processes and social innovations.",
+      count: innovations.length,
     },
+
     {
       title: "Community Knowledge",
       icon: Users,
       text: "Indigenous knowledge, farmer knowledge, community solutions and local practices.",
+      count: knowledgeOutputs.filter(
+        (item) =>
+          item.knowledge_type ===
+            "community_knowledge" ||
+          item.knowledge_type ===
+            "indigenous_knowledge"
+      ).length,
     },
+
     {
       title: "Knowledge Outputs",
       icon: BookOpen,
       text: "Publications, reports, case studies, learning briefs, data and stories.",
+      count: knowledgeOutputs.length,
     },
   ];
 
-  const opportunities = [
-    "Training",
-    "Incubation",
-    "Research",
-    "Funding",
-    "Investment",
-    "Partnership",
-    "Mentorship",
-    "Markets",
-    "Volunteering",
-    "Innovation Challenges",
-  ];
+
+  // =========================================================
+  // FIND MY PLACE
+  // =========================================================
+
+  const handleIdentityChange = async (identity) => {
+    setSelectedIdentity(identity.name);
+
+    try {
+      const response = await ecosystemApi.people(
+        `?person_type=${encodeURIComponent(identity.apiType)}`
+      );
+
+      setMatchedPeople(response?.people || []);
+    } catch (err) {
+      console.error("Unable to personalize ecosystem:", err);
+      setMatchedPeople([]);
+    }
+  };
+
+
+  // =========================================================
+  // SELECTED DATA
+  // =========================================================
 
   const currentNode = useMemo(
-    () => ecosystemNodes.find((node) => node.name === selectedNode),
-    [selectedNode]
+    () =>
+      ecosystemNodes.find(
+        (node) =>
+          node.name === selectedNode
+      ),
+    [
+      selectedNode,
+      communities,
+      projects,
+      people,
+      organisations,
+      programmes,
+      innovations,
+      research,
+      markets,
+      opportunities,
+      impact,
+    ]
   );
+
 
   const currentLab = useMemo(
-    () => labs.find((lab) => lab.name === selectedLab),
-    [selectedLab]
+    () =>
+      labs.find(
+        (lab) =>
+          lab.slug === selectedLab
+      ),
+    [
+      labs,
+      selectedLab,
+    ]
   );
 
+
   const currentIdentity = useMemo(
-    () => identities.find((identity) => identity.name === selectedIdentity),
+    () =>
+      identities.find(
+        (identity) =>
+          identity.name ===
+          selectedIdentity
+      ),
     [selectedIdentity]
   );
 
+
   const currentTheme = useMemo(
-    () => themes.find((theme) => theme.name === selectedTheme),
-    [selectedTheme]
+    () =>
+      themes.find(
+        (theme) =>
+          theme.name === selectedTheme
+      ),
+    [
+      themes,
+      selectedTheme,
+    ]
   );
+
+
+  // =========================================================
+  // LOADING SCREEN
+  // =========================================================
+
+  if (loading) {
+    return (
+      <div className="flex min-h-[70vh] items-center justify-center bg-white">
+        <div className="text-center">
+          <LoaderCircle
+            size={40}
+            className="mx-auto animate-spin text-[#6C994E]"
+          />
+
+          <p className="mt-4 text-sm font-semibold text-[#073B4C]">
+            Loading the IGATI ecosystem...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+
+  // =========================================================
+  // ERROR SCREEN
+  // =========================================================
+
+  if (error) {
+    return (
+      <div className="flex min-h-[70vh] items-center justify-center bg-white px-4">
+        <div className="max-w-md text-center">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-red-50">
+            <Network
+              size={24}
+              className="text-red-500"
+            />
+          </div>
+
+          <h2 className="mt-5 text-xl font-bold text-[#073B4C]">
+            Unable to load the ecosystem
+          </h2>
+
+          <p className="mt-3 text-sm leading-6 text-gray-500">
+            {error}
+          </p>
+
+          <button
+            type="button"
+            onClick={() =>
+              window.location.reload()
+            }
+            className="mt-6 rounded-xl bg-[#073B4C] px-5 py-3 text-sm font-bold text-white"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white text-[#16313B]">
@@ -565,7 +874,7 @@ const EcosystemPage = () => {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex gap-2 overflow-x-auto py-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {themes.map((theme) => {
-              const Icon = theme.icon;
+              const Icon = themeIconMap[theme.name] || Sprout;
               const active = selectedTheme === theme.name;
 
               return (
@@ -945,7 +1254,7 @@ const EcosystemPage = () => {
 
       {/* =========================================================
           STEP 4 — LIVING LABS
-      ========================================================== */}
+       ========================================================== */}
       <section
         id="living-labs"
         className="scroll-mt-44 bg-[#F8FAF7] py-20 sm:py-24 lg:py-28"
@@ -966,46 +1275,55 @@ const EcosystemPage = () => {
           </div>
 
           <div className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {labs.map((lab) => {
-              const Icon = lab.icon;
-              const active = selectedLab === lab.name;
+            {labs.length > 0 ? (
+              labs.map((lab) => {
+                const Icon = labIconMap[lab.name] || Sprout;
+                const active = selectedLab === lab.slug;
 
-              return (
-                <button
-                  key={lab.name}
-                  type="button"
-                  onClick={() => setSelectedLab(lab.name)}
-                  className={`rounded-2xl border p-5 text-left transition-all ${
-                    active
-                      ? "border-[#6C994E]/40 bg-[#073B4C] text-white shadow-xl"
-                      : "border-gray-100 bg-white hover:-translate-y-1 hover:border-[#6C994E]/30"
-                  }`}
-                >
-                  <Icon
-                    size={22}
-                    className={
-                      active ? "text-[#F2B632]" : "text-[#6C994E]"
-                    }
-                  />
-
-                  <p
-                    className={`mt-4 text-sm font-bold leading-6 ${
-                      active ? "text-white" : "text-[#073B4C]"
+                return (
+                  <button
+                    key={lab.id}
+                    type="button"
+                    onClick={() => setSelectedLab(lab.slug)}
+                    className={`rounded-2xl border p-5 text-left transition-all ${
+                      active
+                        ? "border-[#6C994E]/40 bg-[#073B4C] text-white shadow-xl"
+                        : "border-gray-100 bg-white hover:-translate-y-1 hover:border-[#6C994E]/30"
                     }`}
                   >
-                    {lab.name}
-                  </p>
+                    <Icon
+                      size={22}
+                      className={
+                        active ? "text-[#F2B632]" : "text-[#6C994E]"
+                      }
+                    />
 
-                  <p
-                    className={`mt-2 text-[10px] font-semibold uppercase tracking-[0.12em] ${
-                      active ? "text-[#9BC36B]" : "text-gray-400"
-                    }`}
-                  >
-                    {lab.tagline}
-                  </p>
-                </button>
-              );
-            })}
+                    <p
+                      className={`mt-4 text-sm font-bold leading-6 ${
+                        active ? "text-white" : "text-[#073B4C]"
+                      }`}
+                    >
+                      {lab.name}
+                    </p>
+
+                    <p
+                      className={`mt-2 text-[10px] font-semibold uppercase tracking-[0.12em] ${
+                        active ? "text-[#9BC36B]" : "text-gray-400"
+                      }`}
+                    >
+                      {lab.tagline || lab.status_display || "Living Laboratory"}
+                    </p>
+                  </button>
+                );
+              })
+            ) : (
+              <div className="col-span-full rounded-2xl border border-dashed border-gray-200 bg-white p-8 text-center">
+                <Sprout size={25} className="mx-auto text-gray-300" />
+                <p className="mt-4 text-sm font-semibold text-[#073B4C]">
+                  No living laboratories have been published yet.
+                </p>
+              </div>
+            )}
           </div>
 
           {currentLab && (
@@ -1020,9 +1338,54 @@ const EcosystemPage = () => {
                     {currentLab.name}
                   </h3>
 
+                  {currentLab.tagline && (
+                    <p className="mt-2 text-xs font-bold uppercase tracking-[0.12em] text-[#D99A16]">
+                      {currentLab.tagline}
+                    </p>
+                  )}
+
                   <p className="mt-4 text-sm leading-7 text-gray-600">
-                    {currentLab.description}
+                    {currentLab.summary ||
+                      "Explore this living laboratory and the people, communities, research, innovation and opportunities connected to it."}
                   </p>
+
+                  {currentLab.communities?.length > 0 && (
+                    <div className="mt-6">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-gray-400">
+                        Communities
+                      </p>
+
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {currentLab.communities.map((community) => (
+                          <span
+                            key={community.id}
+                            className="rounded-full bg-[#F2F7EE] px-3 py-2 text-[11px] font-semibold text-[#527A3A]"
+                          >
+                            {community.name}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {currentLab.partners?.length > 0 && (
+                    <div className="mt-6">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-gray-400">
+                        Partners
+                      </p>
+
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {currentLab.partners.map((partner) => (
+                          <span
+                            key={partner.id}
+                            className="rounded-full border border-gray-200 px-3 py-2 text-[11px] font-semibold text-[#073B4C]"
+                          >
+                            {partner.name}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div>
@@ -1030,18 +1393,82 @@ const EcosystemPage = () => {
                     Living Laboratory Journey
                   </p>
 
-                  <div className="mt-4 flex flex-wrap items-center gap-2">
-                    {currentLab.journey.map((item, index, array) => (
-                      <div key={item} className="flex items-center gap-2">
-                        <span className="rounded-xl border border-gray-100 bg-[#F8FAF7] px-3 py-2 text-[11px] font-semibold text-[#073B4C]">
-                          {item}
-                        </span>
+                  <div className="mt-4 space-y-3">
+                    {[
+                      {
+                        label: "Challenge",
+                        value: currentLab.challenge,
+                      },
+                      {
+                        label: "Intervention",
+                        value: currentLab.intervention,
+                      },
+                      {
+                        label: "Innovation",
+                        value: currentLab.innovation_summary,
+                      },
+                      {
+                        label: "Enterprise / Value Chain",
+                        value: currentLab.enterprise_value_chain,
+                      },
+                      {
+                        label: "Research & Learning",
+                        value: currentLab.research_learning,
+                      },
+                      {
+                        label: "Investment / Resources",
+                        value: currentLab.investment_resources,
+                      },
+                      {
+                        label: "Results & Impact",
+                        value: currentLab.results_impact,
+                      },
+                      {
+                        label: "Scale",
+                        value: currentLab.scale,
+                      },
+                    ]
+                      .filter((item) => item.value)
+                      .map((item, index) => (
+                        <div
+                          key={item.label}
+                          className="rounded-2xl border border-gray-100 bg-[#F8FAF7] p-4"
+                        >
+                          <div className="flex gap-3">
+                            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#073B4C] text-[10px] font-bold text-[#F2B632]">
+                              {index + 1}
+                            </span>
 
-                        {index < array.length - 1 && (
-                          <ChevronRight size={13} className="text-[#6C994E]" />
-                        )}
+                            <div>
+                              <p className="text-xs font-bold text-[#073B4C]">
+                                {item.label}
+                              </p>
+
+                              <p className="mt-2 text-xs leading-6 text-gray-500">
+                                {item.value}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+
+                    {![
+                      currentLab.challenge,
+                      currentLab.intervention,
+                      currentLab.innovation_summary,
+                      currentLab.enterprise_value_chain,
+                      currentLab.research_learning,
+                      currentLab.investment_resources,
+                      currentLab.results_impact,
+                      currentLab.scale,
+                    ].some(Boolean) && (
+                      <div className="rounded-2xl border border-dashed border-gray-200 bg-[#F8FAF7] p-6 text-center">
+                        <p className="text-xs text-gray-500">
+                          Journey details will appear here as they are added to
+                          the backend.
+                        </p>
                       </div>
-                    ))}
+                    )}
                   </div>
                 </div>
               </div>
@@ -1054,7 +1481,7 @@ const EcosystemPage = () => {
 
       {/* =========================================================
           STEP 5 — PROJECTS
-      ========================================================== */}
+       ========================================================== */}
       <section
         id="projects"
         className="scroll-mt-44 py-20 sm:py-24 lg:py-28"
@@ -1070,9 +1497,8 @@ const EcosystemPage = () => {
                 </h2>
 
                 <p className="mt-4 text-sm leading-7 text-gray-600">
-                  This directory will eventually be powered by the backend and
-                  allow visitors to search projects, programmes, communities,
-                  groups, enterprises and community initiatives.
+                  Search active projects and discover the communities, living
+                  laboratories, themes and programmes connected to them.
                 </p>
 
                 <div className="mt-6 flex items-center gap-3 rounded-xl border border-gray-200 bg-[#F8FAF7] px-4 py-3">
@@ -1080,10 +1506,24 @@ const EcosystemPage = () => {
 
                   <input
                     type="text"
+                    value={projectSearch}
+                    onChange={(e) => setProjectSearch(e.target.value)}
                     placeholder="Search projects, communities or programmes..."
                     className="w-full bg-transparent text-sm outline-none placeholder:text-gray-400"
                   />
                 </div>
+
+                {currentTheme && (
+                  <div className="mt-4 flex items-center gap-2">
+                    <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-gray-400">
+                      Theme:
+                    </span>
+
+                    <span className="rounded-full bg-[#F2F7EE] px-3 py-1.5 text-[10px] font-bold text-[#527A3A]">
+                      {currentTheme.name}
+                    </span>
+                  </div>
+                )}
               </div>
 
               <div className="grid gap-3 sm:grid-cols-2">
@@ -1115,13 +1555,117 @@ const EcosystemPage = () => {
             </div>
           </div>
 
+          <div className="mt-10">
+            <div className="mb-5 flex items-center justify-between gap-4">
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#6C994E]">
+                  Live Project Directory
+                </p>
+
+                <h3 className="mt-1 text-xl font-bold text-[#073B4C]">
+                  Projects
+                </h3>
+              </div>
+
+              <span className="rounded-full bg-[#F8FAF7] px-3 py-2 text-xs font-semibold text-gray-500">
+                {projects.length} {projects.length === 1 ? "result" : "results"}
+              </span>
+            </div>
+
+            {projects.length > 0 ? (
+              <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+                {projects.map((project) => (
+                  <Link
+                    key={project.id}
+                    to={`/projects/${project.slug}`}
+                    className="group overflow-hidden rounded-[22px] border border-gray-100 bg-white transition-all hover:-translate-y-1 hover:border-[#6C994E]/30 hover:shadow-lg"
+                  >
+                    {project.image ? (
+                      <div className="overflow-hidden">
+                        <img
+                          src={project.image}
+                          alt={project.title}
+                          className="h-48 w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                      </div>
+                    ) : (
+                      <div className="flex h-48 items-center justify-center bg-[#F2F7EE]">
+                        <Target size={34} className="text-[#6C994E]/50" />
+                      </div>
+                    )}
+
+                    <div className="p-5">
+                      <div className="flex flex-wrap gap-2">
+                        {project.status_display && (
+                          <span className="rounded-full bg-[#F2F7EE] px-2.5 py-1 text-[9px] font-bold uppercase text-[#527A3A]">
+                            {project.status_display}
+                          </span>
+                        )}
+
+                        {project.location && (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-gray-50 px-2.5 py-1 text-[9px] font-semibold text-gray-500">
+                            <MapPin size={10} />
+                            {project.location.name}
+                          </span>
+                        )}
+                      </div>
+
+                      <h4 className="mt-4 text-lg font-bold text-[#073B4C]">
+                        {project.title}
+                      </h4>
+
+                      <p className="mt-3 line-clamp-3 text-xs leading-6 text-gray-500">
+                        {project.description ||
+                          project.problem_addressed ||
+                          "Explore this project and its connected ecosystem."}
+                      </p>
+
+                      {project.themes?.length > 0 && (
+                        <div className="mt-4 flex flex-wrap gap-1.5">
+                          {project.themes.slice(0, 3).map((theme) => (
+                            <span
+                              key={theme.id}
+                              className="rounded-full border border-gray-100 px-2.5 py-1 text-[9px] font-semibold text-gray-400"
+                            >
+                              {theme.name}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+
+                      <div className="mt-5 inline-flex items-center gap-2 text-xs font-bold text-[#6C994E]">
+                        Explore project
+                        <ArrowRight
+                          size={13}
+                          className="transition-transform group-hover:translate-x-1"
+                        />
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <div className="rounded-2xl border border-dashed border-gray-200 bg-[#F8FAF7] p-10 text-center">
+                <Search size={25} className="mx-auto text-gray-300" />
+
+                <p className="mt-4 text-sm font-semibold text-[#073B4C]">
+                  No projects found
+                </p>
+
+                <p className="mt-2 text-xs text-gray-400">
+                  Try another search term or select a different theme.
+                </p>
+              </div>
+            )}
+          </div>
+
           <NextStep onClick={() => scrollToSection("people")} />
         </div>
       </section>
 
       {/* =========================================================
           STEP 6 — PEOPLE
-      ========================================================== */}
+       ========================================================== */}
       <section
         id="people"
         className="scroll-mt-44 bg-[#073B4C] py-20 text-white sm:py-24 lg:py-28"
@@ -1140,42 +1684,131 @@ const EcosystemPage = () => {
             </h2>
 
             <p className="mt-4 text-sm leading-7 text-white/60">
-              Profiles will connect people and organisations directly to their
-              laboratories, projects, expertise and opportunities.
+              Explore public profiles and organisations connected to projects,
+              living laboratories, research, communities and opportunities.
             </p>
           </div>
 
-          <div className="mt-12 grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            {[
-              "Farmers",
-              "Students",
-              "Researchers",
-              "Entrepreneurs",
-              "Innovators",
-              "Community Groups",
-              "CBOs",
-              "NGOs",
-              "Institutions",
-              "Investors",
-              "Partners",
-              "Mentors",
-              "Volunteers",
-            ].map((person) => (
-              <div
-                key={person}
-                className="rounded-2xl border border-white/10 bg-white/[0.05] p-5 transition-all hover:bg-white/[0.08]"
-              >
-                <Users size={19} className="text-[#F2B632]" />
+          <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {people.length > 0 ? (
+              people.slice(0, 6).map((person) => (
+                <div
+                  key={person.id}
+                  className="rounded-[22px] border border-white/10 bg-white/[0.05] p-6 transition-all hover:-translate-y-1 hover:bg-white/[0.08]"
+                >
+                  <div className="flex items-center gap-4">
+                    {person.profile_image ? (
+                      <img
+                        src={person.profile_image}
+                        alt={person.full_name}
+                        className="h-12 w-12 rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#F2B632] text-[#073B4C]">
+                        <Users size={19} />
+                      </div>
+                    )}
 
-                <p className="mt-4 text-sm font-bold">{person}</p>
+                    <div className="min-w-0">
+                      <h3 className="truncate font-bold text-white">
+                        {person.full_name}
+                      </h3>
 
-                <p className="mt-2 text-xs leading-6 text-white/45">
-                  Profile → Work → Location → Ecosystem → Projects → Expertise →
-                  Opportunities
+                      <p className="mt-1 text-[10px] font-semibold uppercase tracking-wider text-[#9BC36B]">
+                        {person.person_type_display || person.person_type}
+                      </p>
+                    </div>
+                  </div>
+
+                  {person.role && (
+                    <p className="mt-4 text-xs leading-6 text-white/55">
+                      {person.role}
+                    </p>
+                  )}
+
+                  {person.expertise && (
+                    <p className="mt-3 line-clamp-2 text-xs leading-6 text-white/45">
+                      {person.expertise}
+                    </p>
+                  )}
+
+                  {person.location && (
+                    <div className="mt-4 flex items-center gap-2 text-[11px] text-white/40">
+                      <MapPin size={12} />
+                      {person.location.name}
+                    </div>
+                  )}
+
+                  {person.organisations?.length > 0 && (
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      {person.organisations.slice(0, 2).map((organisation) => (
+                        <span
+                          key={organisation.id}
+                          className="rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[9px] font-semibold text-white/50"
+                        >
+                          {organisation.name}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))
+            ) : (
+              <div className="col-span-full rounded-[24px] border border-dashed border-white/15 bg-white/[0.04] p-10 text-center">
+                <Users size={28} className="mx-auto text-white/30" />
+                <p className="mt-4 text-sm font-semibold">
+                  No public people profiles have been published yet.
                 </p>
               </div>
-            ))}
+            )}
           </div>
+
+          {organisations.length > 0 && (
+            <div className="mt-12 border-t border-white/10 pt-10">
+              <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#F2B632]">
+                    Organisations
+                  </p>
+
+                  <h3 className="mt-2 text-2xl font-bold">
+                    Institutions, enterprises and partners
+                  </h3>
+                </div>
+
+                <span className="text-xs text-white/40">
+                  {organisations.length} public organisations
+                </span>
+              </div>
+
+              <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                {organisations.slice(0, 8).map((organisation) => (
+                  <div
+                    key={organisation.id}
+                    className="rounded-2xl border border-white/10 bg-white/[0.05] p-5"
+                  >
+                    <Landmark size={18} className="text-[#F2B632]" />
+
+                    <p className="mt-4 text-sm font-bold">
+                      {organisation.name}
+                    </p>
+
+                    <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#9BC36B]">
+                      {organisation.organisation_type_display ||
+                        organisation.organisation_type}
+                    </p>
+
+                    {organisation.location && (
+                      <div className="mt-3 flex items-center gap-2 text-[10px] text-white/40">
+                        <MapPin size={11} />
+                        {organisation.location.name}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           <NextStep
             dark
@@ -1186,7 +1819,7 @@ const EcosystemPage = () => {
 
       {/* =========================================================
           STEP 7 — KNOWLEDGE
-      ========================================================== */}
+       ========================================================== */}
       <section
         id="knowledge"
         className="scroll-mt-44 py-20 sm:py-24 lg:py-28"
@@ -1202,6 +1835,11 @@ const EcosystemPage = () => {
               Connect community work
               <span className="text-[#6C994E]"> to knowledge.</span>
             </h2>
+
+            <p className="mt-4 text-sm leading-7 text-gray-600">
+              Research, innovation and community knowledge are connected to the
+              projects, people and communities where learning happens.
+            </p>
           </div>
 
           <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
@@ -1224,10 +1862,119 @@ const EcosystemPage = () => {
                   <p className="mt-3 text-xs leading-6 text-gray-500">
                     {stream.text}
                   </p>
+
+                  <div className="mt-5 border-t border-gray-200 pt-4">
+                    <p className="text-2xl font-bold text-[#6C994E]">
+                      {stream.count}
+                    </p>
+
+                    <p className="mt-1 text-[9px] font-semibold uppercase tracking-[0.12em] text-gray-400">
+                      Available records
+                    </p>
+                  </div>
                 </div>
               );
             })}
           </div>
+
+          {(research.length > 0 ||
+            innovations.length > 0 ||
+            knowledgeOutputs.length > 0) && (
+            <div className="mt-10 grid gap-5 lg:grid-cols-3">
+              <div className="rounded-[24px] border border-gray-100 bg-white p-6 shadow-sm">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-bold text-[#073B4C]">
+                    Latest Research
+                  </h3>
+                  <Telescope size={18} className="text-[#6C994E]" />
+                </div>
+
+                <div className="mt-5 space-y-3">
+                  {research.slice(0, 3).map((item) => (
+                    <div
+                      key={item.id}
+                      className="rounded-xl bg-[#F8FAF7] p-4"
+                    >
+                      <p className="text-xs font-bold text-[#073B4C]">
+                        {item.title}
+                      </p>
+                      <p className="mt-2 text-[10px] uppercase tracking-[0.1em] text-gray-400">
+                        {item.research_type_display || item.research_type}
+                      </p>
+                    </div>
+                  ))}
+
+                  {research.length === 0 && (
+                    <p className="text-xs text-gray-400">
+                      No research records published yet.
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="rounded-[24px] border border-gray-100 bg-white p-6 shadow-sm">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-bold text-[#073B4C]">
+                    Innovations
+                  </h3>
+                  <Lightbulb size={18} className="text-[#D99A16]" />
+                </div>
+
+                <div className="mt-5 space-y-3">
+                  {innovations.slice(0, 3).map((item) => (
+                    <div
+                      key={item.id}
+                      className="rounded-xl bg-[#F8FAF7] p-4"
+                    >
+                      <p className="text-xs font-bold text-[#073B4C]">
+                        {item.name}
+                      </p>
+                      <p className="mt-2 text-[10px] uppercase tracking-[0.1em] text-gray-400">
+                        {item.status_display || item.status}
+                      </p>
+                    </div>
+                  ))}
+
+                  {innovations.length === 0 && (
+                    <p className="text-xs text-gray-400">
+                      No innovation records published yet.
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="rounded-[24px] border border-gray-100 bg-white p-6 shadow-sm">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-bold text-[#073B4C]">
+                    Knowledge Outputs
+                  </h3>
+                  <BookOpen size={18} className="text-[#6C994E]" />
+                </div>
+
+                <div className="mt-5 space-y-3">
+                  {knowledgeOutputs.slice(0, 3).map((item) => (
+                    <div
+                      key={item.id}
+                      className="rounded-xl bg-[#F8FAF7] p-4"
+                    >
+                      <p className="text-xs font-bold text-[#073B4C]">
+                        {item.title}
+                      </p>
+                      <p className="mt-2 text-[10px] uppercase tracking-[0.1em] text-gray-400">
+                        {item.knowledge_type_display || item.knowledge_type}
+                      </p>
+                    </div>
+                  ))}
+
+                  {knowledgeOutputs.length === 0 && (
+                    <p className="text-xs text-gray-400">
+                      No knowledge outputs published yet.
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="mt-10 rounded-[26px] bg-[#F2F7EE] p-6 sm:p-8">
             <p className="text-center text-xs font-bold uppercase tracking-[0.16em] text-[#6C994E]">
@@ -1253,7 +2000,7 @@ const EcosystemPage = () => {
 
       {/* =========================================================
           STEP 8 — OPPORTUNITIES
-      ========================================================== */}
+       ========================================================== */}
       <section
         id="opportunities"
         className="scroll-mt-44 bg-[#F8FAF7] py-20 sm:py-24 lg:py-28"
@@ -1267,28 +2014,92 @@ const EcosystemPage = () => {
             </h2>
 
             <p className="mt-4 text-sm leading-7 text-gray-600">
-              Live opportunities will later come from the backend with
-              eligibility, location, requirements, status, deadlines and
-              application methods.
+              Explore live opportunities for training, research, funding,
+              investment, partnership, mentorship, markets, volunteering and
+              innovation challenges.
             </p>
           </div>
 
-          <div className="mt-12 grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
-            {opportunities.map((opportunity) => (
-              <div
-                key={opportunity}
-                className="rounded-2xl border border-gray-100 bg-white p-5 text-center transition-all hover:-translate-y-1 hover:border-[#6C994E]/30 hover:shadow-lg"
-              >
+          <div className="mt-12">
+            {opportunities.length > 0 ? (
+              <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+                {opportunities.map((opportunity) => (
+                  <Link
+                    key={opportunity.id}
+                    to={`/opportunities/${opportunity.slug}`}
+                    className="group rounded-[24px] border border-gray-100 bg-white p-6 transition-all hover:-translate-y-1 hover:border-[#6C994E]/30 hover:shadow-lg"
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#F2F7EE] text-[#6C994E]">
+                        <CircleDollarSign size={20} />
+                      </div>
+
+                      <span
+                        className={`rounded-full px-3 py-1 text-[9px] font-bold uppercase ${
+                          opportunity.status === "open"
+                            ? "bg-green-50 text-green-700"
+                            : opportunity.status === "upcoming"
+                              ? "bg-amber-50 text-amber-700"
+                              : "bg-gray-100 text-gray-500"
+                        }`}
+                      >
+                        {opportunity.status_display || opportunity.status}
+                      </span>
+                    </div>
+
+                    <p className="mt-5 text-[9px] font-bold uppercase tracking-[0.14em] text-[#D99A16]">
+                      {opportunity.opportunity_type_display ||
+                        opportunity.opportunity_type}
+                    </p>
+
+                    <h3 className="mt-2 text-lg font-bold text-[#073B4C]">
+                      {opportunity.title}
+                    </h3>
+
+                    <p className="mt-3 line-clamp-3 text-xs leading-6 text-gray-500">
+                      {opportunity.description}
+                    </p>
+
+                    {opportunity.location && (
+                      <div className="mt-4 flex items-center gap-2 text-[11px] text-gray-400">
+                        <MapPin size={12} />
+                        {opportunity.location.name}
+                      </div>
+                    )}
+
+                    {opportunity.deadline && (
+                      <p className="mt-3 text-[11px] text-gray-400">
+                        Deadline:{" "}
+                        {new Date(opportunity.deadline).toLocaleDateString()}
+                      </p>
+                    )}
+
+                    <div className="mt-5 inline-flex items-center gap-2 text-xs font-bold text-[#6C994E]">
+                      View Opportunity
+                      <ArrowRight
+                        size={13}
+                        className="transition-transform group-hover:translate-x-1"
+                      />
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <div className="rounded-2xl border border-dashed border-gray-200 bg-white p-10 text-center">
                 <CircleDollarSign
-                  size={21}
-                  className="mx-auto text-[#6C994E]"
+                  size={26}
+                  className="mx-auto text-gray-300"
                 />
 
-                <p className="mt-4 text-sm font-bold text-[#073B4C]">
-                  {opportunity}
+                <p className="mt-4 text-sm font-semibold text-[#073B4C]">
+                  No open opportunities currently.
+                </p>
+
+                <p className="mt-2 text-xs text-gray-400">
+                  New opportunities will appear here when they are published.
                 </p>
               </div>
-            ))}
+            )}
           </div>
 
           <NextStep onClick={() => scrollToSection("find-your-place")} />
@@ -1297,7 +2108,7 @@ const EcosystemPage = () => {
 
       {/* =========================================================
           STEP 9 — FIND YOUR PLACE
-      ========================================================== */}
+       ========================================================== */}
       <section
         id="find-your-place"
         className="scroll-mt-44 py-20 sm:py-24 lg:py-28"
@@ -1318,8 +2129,8 @@ const EcosystemPage = () => {
             </h2>
 
             <p className="mt-4 text-sm leading-7 text-gray-600">
-              Choose your identity and discover the parts of the ecosystem most
-              relevant to you.
+              Choose your identity and discover the people and opportunities
+              most relevant to your place in the ecosystem.
             </p>
           </div>
 
@@ -1332,7 +2143,7 @@ const EcosystemPage = () => {
                 <button
                   key={identity.name}
                   type="button"
-                  onClick={() => setSelectedIdentity(identity.name)}
+                  onClick={() => handleIdentityChange(identity)}
                   className={`inline-flex items-center gap-2 rounded-xl border px-4 py-3 text-sm font-bold transition-all ${
                     active
                       ? "border-[#073B4C] bg-[#073B4C] text-white"
@@ -1353,7 +2164,7 @@ const EcosystemPage = () => {
           </div>
 
           {currentIdentity && (
-            <div className="mx-auto mt-10 max-w-4xl rounded-[30px] bg-[#073B4C] p-7 text-white sm:p-9">
+            <div className="mx-auto mt-10 max-w-5xl rounded-[30px] bg-[#073B4C] p-7 text-white sm:p-9">
               <div className="grid gap-8 md:grid-cols-[0.65fr_1.35fr] md:items-center">
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#F2B632]">
@@ -1365,9 +2176,9 @@ const EcosystemPage = () => {
                   </h3>
 
                   <p className="mt-4 text-sm leading-7 text-white/55">
-                    Based on this identity, the platform can prioritize the
-                    programmes, people, knowledge, opportunities and markets
-                    most relevant to your journey.
+                    The ecosystem is now showing public people records that
+                    match this identity while keeping open participation
+                    opportunities visible.
                   </p>
                 </div>
 
@@ -1387,6 +2198,55 @@ const EcosystemPage = () => {
                   ))}
                 </div>
               </div>
+
+              <div className="mt-8 border-t border-white/10 pt-7">
+                <div className="flex items-center justify-between gap-4">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#9BC36B]">
+                    Matching People
+                  </p>
+
+                  <span className="text-[10px] text-white/40">
+                    {matchedPeople.length}{" "}
+                    {matchedPeople.length === 1 ? "profile" : "profiles"}
+                  </span>
+                </div>
+
+                {matchedPeople.length > 0 ? (
+                  <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                    {matchedPeople.slice(0, 6).map((person) => (
+                      <div
+                        key={person.id}
+                        className="rounded-xl border border-white/10 bg-white/[0.05] p-4"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#F2B632] text-[#073B4C]">
+                            <Users size={15} />
+                          </div>
+
+                          <div className="min-w-0">
+                            <p className="truncate text-xs font-bold">
+                              {person.full_name}
+                            </p>
+
+                            <p className="mt-1 truncate text-[9px] uppercase tracking-[0.1em] text-white/40">
+                              {person.role ||
+                                person.person_type_display ||
+                                person.person_type}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="mt-5 rounded-xl border border-dashed border-white/10 bg-white/[0.03] p-5 text-center">
+                    <p className="text-xs text-white/45">
+                      No public profiles matching this identity have been
+                      published yet.
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
@@ -1395,7 +2255,7 @@ const EcosystemPage = () => {
       </section>
 
       {/* =========================================================
-          STEP 10 — TAKE ACTION
+          STEP 10 — TAKE ACTIONSTEP 10 — TAKE ACTION
       ========================================================== */}
       <section
         id="take-action"
