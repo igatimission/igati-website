@@ -9,11 +9,12 @@ import EcosystemPage from "../pages/EcosystemPage";
 // import ProjectDetailsPage from "../pages/ProjectDetailsPage";
 // import OpportunitiesPage from "../pages/OpportunitiesPage";
 // import OpportunityDetailsPage from "../pages/OpportunityDetailsPage";
-// import MarketplacePage from "../pages/MarketplacePage";
+import MarketplacePage from "../pages/MarketplacePage";
 // import MarketplaceDetailsPage from "../pages/MarketplaceDetailsPage";
 // import LearnPage from "../pages/LearnPage";
 // import JoinPage from "../pages/JoinPage";
-// import LoginPage from "../pages/LoginPage";
+import LoginPage from "../pages/LoginPage";
+import RegisterPage from "../pages/RegisterPage";
 // import NotFoundPage from "../pages/NotFoundPage";
 
 const AppRouter = () => {
@@ -31,19 +32,20 @@ const AppRouter = () => {
         <Route
           path="/opportunities/:slug"
           element={<OpportunityDetailsPage />}
-        />
+        /> */}
 
         <Route path="/marketplace" element={<MarketplacePage />} />
-        <Route
+        {/* <Route
           path="/marketplace/:slug"
           element={<MarketplaceDetailsPage />}
-        />
+        /> */}
 
-        <Route path="/learn" element={<LearnPage />} />
-        <Route path="/join" element={<JoinPage />} />
+        {/* <Route path="/learn" element={<LearnPage />} />
+        <Route path="/join" element={<JoinPage />} /> */}
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
 
-        <Route path="*" element={<NotFoundPage />} /> */}
+        {/* <Route path="*" element={<NotFoundPage />} /> */}
       </Route>
     </Routes>
   );
