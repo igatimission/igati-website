@@ -164,7 +164,7 @@ const Navbar = () => {
               </Link> */}
 
               <Link
-                to="/join"
+                to="/register"
                 className="group flex items-center gap-2 rounded-xl bg-[#073B4C] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#07505E] hover:shadow-md"
               >
                 Join Network
@@ -402,7 +402,7 @@ const Navbar = () => {
                   </Link>
 
                   <Link
-                    to="/join"
+                    to="/register"
                     onClick={closeMobileMenu}
                     className="block py-2.5 text-sm text-gray-600"
                   >

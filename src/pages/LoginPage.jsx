@@ -55,7 +55,7 @@ const LoginPage = () => {
       );
 
       const destination =
-        location.state?.from?.pathname || "/marketplace";
+        location.state?.from?.pathname || "/profile";
 
       navigate(destination, {
         replace: true,

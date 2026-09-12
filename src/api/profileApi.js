@@ -1,29 +1,18 @@
 import { apiRequest } from "./api";
 
-
 export const profileApi = {
-  getPeople: (params = {}) => {
-    const searchParams = new URLSearchParams(params);
+  myProfile: () =>
+    apiRequest("/people/me/"),
 
-    const query = searchParams.toString();
-
-    return apiRequest(
-      `/profiles/${query ? `?${query}` : ""}`
-    );
-  },
-
-  getProfile: (slug) => {
-    return apiRequest(`/profiles/${slug}/`);
-  },
-
-  myProfile: () => {
-    return apiRequest("/profiles/me/");
-  },
-
-  updateProfile: (data) => {
-    return apiRequest("/profiles/me/update/", {
+  updateProfile: (data) =>
+    apiRequest("/people/me/update/", {
       method: "PATCH",
       body: JSON.stringify(data),
-    });
-  },
+    }),
+
+  getPeople: (params = "") =>
+    apiRequest(`/people/${params}`),
+
+  getProfile: (slug) =>
+    apiRequest(`/people/${slug}/`),
 };

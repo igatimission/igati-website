@@ -15,7 +15,15 @@ import MarketplacePage from "../pages/MarketplacePage";
 // import JoinPage from "../pages/JoinPage";
 import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
+import MyProfilePage from "../pages/MyProfilePage";
 // import NotFoundPage from "../pages/NotFoundPage";
+
+
+import RegisterOrganisationPage from "../pages/RegisterOrganisationPage";
+import MyOrganisationsPage from "../pages/MyOrganisationsPage";
+import ManageOrganisationMembersPage from "../pages/ManageOrganisationMembersPage";
+import OrganisationProfilePage from "../pages/OrganisationProfilePage";
+import CreateOrganisationPostPage from "../pages/CreateOrganisationPostPage";
 
 const AppRouter = () => {
   return (
@@ -44,6 +52,13 @@ const AppRouter = () => {
         <Route path="/join" element={<JoinPage />} /> */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/profile" element={<MyProfilePage />} />
+
+        <Route path="/organisations/register" element={<RegisterOrganisationPage />}/>
+        <Route path="/my-organisations" element={<MyOrganisationsPage />}/>
+        <Route path="/my-organisations/:slug/members" element={<ManageOrganisationMembersPage />}/>
+        <Route path="/organisations/:slug" element={<OrganisationProfilePage />}/>
+        <Route path="/organisations/:slug/posts/create" element={<CreateOrganisationPostPage />}/>
 
         {/* <Route path="*" element={<NotFoundPage />} /> */}
       </Route>

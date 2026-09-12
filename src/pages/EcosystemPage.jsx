@@ -34,7 +34,7 @@ import {
   Wheat,
 } from "lucide-react";
 
-import { ecosystemApi } from "../services/api";
+import { ecosystemApi } from "../api/ecosystemApi";
 
 const EcosystemPage = () => {
   // =========================================================
