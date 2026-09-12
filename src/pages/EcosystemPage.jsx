@@ -842,7 +842,7 @@ const EcosystemPage = () => {
               markets, partners and opportunities.
             </p>
 
-            <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
+            {/* <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
               <button
                 type="button"
                 onClick={() => scrollToSection("global-mission")}
@@ -860,7 +860,7 @@ const EcosystemPage = () => {
                 Find Your Place
                 <ArrowRight size={16} />
               </button>
-            </div>
+            </div> */}
           </div>
         </div>
 
@@ -870,7 +870,7 @@ const EcosystemPage = () => {
       {/* =========================================================
           PERSISTENT THEMATIC NAVIGATION
       ========================================================== */}
-      <div className="sticky top-[90px] z-40 border-b border-gray-100 bg-white/95 shadow-sm backdrop-blur-xl lg:top-[105px]">
+      {/* <div className="sticky top-[90px] z-40 border-b border-gray-100 bg-white/95 shadow-sm backdrop-blur-xl lg:top-[105px]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex gap-2 overflow-x-auto py-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {themes.map((theme) => {
@@ -909,7 +909,7 @@ const EcosystemPage = () => {
             </div>
           )}
         </div>
-      </div>
+      </div> */}
 
       {/* =========================================================
           STEP 1 — GLOBAL MISSION
@@ -928,9 +928,9 @@ const EcosystemPage = () => {
               </p>
 
               <h2 className="mt-4 text-3xl font-bold leading-tight text-[#073B4C] sm:text-4xl">
-                From inspiration to
+                From word inspiration to
                 <span className="block text-[#6C994E]">
-                  community transformation.
+                  communities transformation.
                 </span>
               </h2>
 
@@ -954,9 +954,6 @@ const EcosystemPage = () => {
               />
 
               <div className="mt-8 border-t border-gray-200 pt-7">
-                <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#D99A16]">
-                  Geographic Journey
-                </p>
 
                 <div className="mt-4 flex flex-wrap items-center gap-2">
                   {["Meru County", "Kenya", "Africa", "Global"].map(
@@ -987,7 +984,7 @@ const EcosystemPage = () => {
             </div>
           </div>
 
-          <NextStep onClick={() => scrollToSection("geography")} />
+          {/* <NextStep onClick={() => scrollToSection("geography")} /> */}
         </div>
       </section>
 

@@ -94,7 +94,7 @@ const Hero = () => {
             {/* Supporting statement */}
             <p className="mt-5 max-w-2xl text-sm leading-7 text-white/55 sm:text-base">
               Enter a living ecosystem where community challenges connect with
-              university knowledge, innovation, enterprise development,
+              universities, knowledge, innovators, enterpreneurs, investors,
               partnerships, markets and opportunities for sustainable
               transformation.
             </p>
