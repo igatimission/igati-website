@@ -76,8 +76,8 @@ const ExploreEcosystem = () => {
 
             {/* Intro */}
             <p className="mx-auto mt-6 max-w-3xl text-sm leading-7 text-white/70 sm:text-base lg:text-lg lg:leading-8">
-              Discover how communities, university, research, innovation,
-              entrepreneurship, enterprises, markets and partners connect to
+              Discover how communities, universities, researchers, innovators,
+              social entrepreneurs, enterprises, markets and partners connect to
               create sustainable community impact.
             </p>
 
@@ -118,13 +118,7 @@ const ExploreEcosystem = () => {
               })}
             </div>
 
-            {/* Supporting line */}
-            <div className="mt-10 border-t border-white/10 pt-7">
-              <p className="text-xs font-medium uppercase tracking-[0.16em] text-white/40">
-                Community → Research → Innovation → Enterprise → Market →
-                Impact
-              </p>
-            </div>
+          
           </div>
         </div>
       </div>

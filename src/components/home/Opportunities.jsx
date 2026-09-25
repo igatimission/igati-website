@@ -92,11 +92,6 @@ const Opportunities = () => {
               </span>
             </h2>
 
-            <p className="mt-5 max-w-2xl text-base leading-8 text-gray-600 lg:text-lg">
-              Explore opportunities to learn, research, innovate, partner,
-              access markets, mobilize resources and grow enterprises across
-              the IGATI ecosystem.
-            </p>
           </div>
 
           <Link
@@ -110,109 +105,6 @@ const Opportunities = () => {
               className="transition-transform duration-300 group-hover:translate-x-1"
             />
           </Link>
-        </div>
-
-        {/* Featured opportunity banner */}
-        <div className="mt-14 overflow-hidden rounded-[30px] bg-[#073B4C] text-white shadow-xl shadow-[#073B4C]/10">
-          <div className="grid lg:grid-cols-[1.05fr_0.95fr]">
-            {/* Left */}
-            <div className="relative p-7 sm:p-9 lg:p-11">
-              <div className="pointer-events-none absolute -left-16 -top-20 h-72 w-72 rounded-full bg-[#6C994E]/20 blur-3xl" />
-
-              <div className="relative">
-                <span className="inline-flex rounded-full bg-[#F2B632] px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.16em] text-[#073B4C]">
-                  Ecosystem Opportunities
-                </span>
-
-                <h3 className="mt-6 max-w-xl text-2xl font-bold leading-tight sm:text-3xl lg:text-4xl">
-                  Find the opportunity that moves
-                  <span className="block text-[#9BC36B]">
-                    your idea, project or enterprise forward.
-                  </span>
-                </h3>
-
-                <p className="mt-5 max-w-xl text-sm leading-7 text-white/65 sm:text-base">
-                  IGATI brings together opportunities from communities,
-                  institutions, researchers, partners, enterprises, investors
-                  and development actors so people can move from interest to
-                  participation and impact.
-                </p>
-
-                <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                  <Link
-                    to="/opportunities"
-                    className="group inline-flex items-center justify-center gap-2 rounded-xl bg-[#F2B632] px-6 py-3.5 text-sm font-bold text-[#073B4C] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#e1a520]"
-                  >
-                    Explore Opportunities
-
-                    <ArrowRight
-                      size={16}
-                      className="transition-transform duration-300 group-hover:translate-x-1"
-                    />
-                  </Link>
-
-                  <Link
-                    to="/join"
-                    className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/[0.05] px-6 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-white/[0.09]"
-                  >
-                    Join the Network
-                  </Link>
-                </div>
-              </div>
-            </div>
-
-            {/* Right */}
-            <div className="relative flex items-center justify-center bg-[#062F3D] p-7 sm:p-9 lg:p-10">
-              <div
-                className="pointer-events-none absolute inset-0 opacity-[0.035]"
-                style={{
-                  backgroundImage:
-                    "linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px)",
-                  backgroundSize: "42px 42px",
-                }}
-              />
-
-              <div className="relative w-full max-w-sm">
-                <p className="text-center text-[10px] font-bold uppercase tracking-[0.16em] text-[#F2B632]">
-                  Opportunity Pathways
-                </p>
-
-                <div className="mt-6 space-y-3">
-                  {[
-                    "Discover",
-                    "Connect",
-                    "Apply",
-                    "Collaborate",
-                    "Build",
-                    "Grow",
-                  ].map((item, index) => (
-                    <div
-                      key={item}
-                      className="flex items-center gap-3"
-                    >
-                      <div
-                        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[10px] font-bold ${
-                          index === 0
-                            ? "bg-[#F2B632] text-[#073B4C]"
-                            : index === 5
-                            ? "bg-[#6C994E] text-white"
-                            : "bg-white/10 text-white/65"
-                        }`}
-                      >
-                        {index + 1}
-                      </div>
-
-                      <div className="flex-1 rounded-xl border border-white/8 bg-white/[0.05] px-4 py-3">
-                        <p className="text-xs font-semibold text-white/75">
-                          {item}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Opportunity cards */}

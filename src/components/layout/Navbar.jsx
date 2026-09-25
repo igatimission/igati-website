@@ -129,7 +129,7 @@ const Navbar = () => {
                     to="/media_stories"
                     className="block rounded-xl px-4 py-3 text-sm font-medium text-gray-600 transition-colors hover:bg-[#F8FAF7] hover:text-[#073B4C]"
                   >
-                    Media & Our Stories
+                    Impact & Media
                   </Link>
 
                   <Link
@@ -398,7 +398,7 @@ const Navbar = () => {
                     onClick={closeMobileMenu}
                     className="block py-2.5 text-sm text-gray-600"
                   >
-                    Media & Our Stories
+                    Impact & Media
                   </Link>
 
                   <Link

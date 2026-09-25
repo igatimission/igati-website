@@ -60,29 +60,6 @@ const About = () => {
       <div className="pointer-events-none absolute -right-32 bottom-0 h-80 w-80 rounded-full bg-[#F2B632]/8 blur-3xl" />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Section Heading */}
-        <div className="mx-auto max-w-3xl text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-[#6C994E]/20 bg-[#6C994E]/8 px-4 py-2">
-            <Network size={14} className="text-[#6C994E]" />
-
-            <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#527A3A]">
-              About IGATI
-            </span>
-          </div>
-
-          <h2 className="mt-5 text-3xl font-bold leading-tight text-[#073B4C] sm:text-4xl lg:text-5xl">
-            One Mission. One Connected Ecosystem.
-            <span className="mt-1 block text-[#6C994E]">
-              Many Pathways to Impact.
-            </span>
-          </h2>
-
-          <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-gray-600 lg:text-lg">
-            IGATI Global Mission Network connects people, institutions,
-            knowledge and opportunities around practical solutions for social
-            and economic transformation.
-          </p>
-        </div>
 
         {/* Main About Content */}
         <div className="mt-14 grid items-start gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
@@ -189,31 +166,7 @@ const About = () => {
           {/* Right - Institutional Network */}
           <div className="relative">
             <div className="rounded-[28px] border border-gray-100 bg-white p-5 shadow-xl shadow-[#073B4C]/5 sm:p-7">
-              {/* Umbrella */}
-              <div className="relative overflow-hidden rounded-2xl bg-[#073B4C] p-6 text-white">
-                <div className="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full bg-[#6C994E]/25 blur-2xl" />
-
-                <div className="relative flex items-start gap-4">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#F2B632] text-[#073B4C]">
-                    <Network size={22} />
-                  </div>
-
-                  <div>
-                    <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#F2B632]">
-                      Umbrella Network
-                    </p>
-
-                    <h4 className="mt-1 text-lg font-bold">
-                      IGATI Global Mission Network
-                    </h4>
-
-                    <p className="mt-2 text-xs leading-5 text-white/60">
-                      Connecting people, institutions, programmes,
-                      enterprises and opportunities.
-                    </p>
-                  </div>
-                </div>
-              </div>
+              
 
               {/* Connector */}
               <div className="mx-auto h-6 w-px bg-[#6C994E]/30" />

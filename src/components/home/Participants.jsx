@@ -282,19 +282,6 @@ const Participants = () => {
                 ))}
               </div>
 
-              <div className="mt-7">
-                <Link
-                  to="/join"
-                  className="group inline-flex items-center gap-2 rounded-xl bg-[#073B4C] px-6 py-3.5 text-sm font-bold text-white transition-all duration-300 hover:bg-[#07505E]"
-                >
-                  Join the MUST–IGATI Ecosystem
-
-                  <ArrowRight
-                    size={16}
-                    className="text-[#F2B632] transition-transform duration-300 group-hover:translate-x-1"
-                  />
-                </Link>
-              </div>
             </div>
           </div>
         </div>

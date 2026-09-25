@@ -64,7 +64,7 @@ const Projects = () => {
               <Sprout size={14} className="text-[#6C994E]" />
 
               <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#527A3A] sm:text-xs">
-                Featured Projects
+                Featured Programs and Projects
               </span>
             </div>
 
@@ -76,8 +76,8 @@ const Projects = () => {
             </h2>
 
             <p className="mt-5 max-w-2xl text-base leading-8 text-gray-600 lg:text-lg">
-              IGATI projects connect community challenges with research,
-              innovation, training, enterprise development, markets and
+              IGATI projects connect community challenges with researchers,
+              innovators, trainers, enterprises, markets and
               investment to create sustainable social and economic impact.
             </p>
           </div>
@@ -337,36 +337,6 @@ const Projects = () => {
           })}
         </div>
 
-        {/* Ecosystem CTA */}
-        <div className="mt-14 flex flex-col gap-6 rounded-[26px] border border-[#6C994E]/15 bg-white p-6 sm:p-8 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.17em] text-[#6C994E]">
-              See How Everything Connects
-            </p>
-
-            <h3 className="mt-2 text-xl font-bold text-[#073B4C] sm:text-2xl">
-              Projects are pathways inside a larger living ecosystem.
-            </h3>
-
-            <p className="mt-2 max-w-2xl text-sm leading-7 text-gray-600">
-              Explore how community participation, research, innovation,
-              entrepreneurship, enterprise, markets and investment connect
-              across the MUST–IGATI Community Ecosystem.
-            </p>
-          </div>
-
-          <Link
-            to="/ecosystem"
-            className="group inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-[#073B4C] px-6 py-3.5 text-sm font-bold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#07505E]"
-          >
-            Enter the Ecosystem
-
-            <ArrowRight
-              size={16}
-              className="text-[#F2B632] transition-transform duration-300 group-hover:translate-x-1"
-            />
-          </Link>
-        </div>
       </div>
     </section>
   );
