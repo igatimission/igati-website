@@ -126,7 +126,7 @@ const Navbar = () => {
               <div className="invisible absolute right-0 top-full z-50 w-56 translate-y-2 pt-2 opacity-0 transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
                 <div className="rounded-2xl border border-gray-100 bg-white p-2 shadow-xl">
                   <Link
-                    to="/media_stories"
+                    to="/impact-media"
                     className="block rounded-xl px-4 py-3 text-sm font-medium text-gray-600 transition-colors hover:bg-[#F8FAF7] hover:text-[#073B4C]"
                   >
                     Impact & Media
@@ -156,12 +156,12 @@ const Navbar = () => {
           <div className="hidden shrink-0 items-center gap-3 lg:flex">
             {/* Actions - wider desktops */}
             <div className="hidden items-center gap-2 xl:flex">
-              {/* <Link
+              <Link
                 to="/login"
                 className="rounded-xl px-3 py-2.5 text-sm font-semibold text-[#073B4C] transition-colors hover:bg-gray-50"
               >
                 Sign In
-              </Link> */}
+              </Link>
 
               <Link
                 to="/register"
@@ -394,7 +394,7 @@ const Navbar = () => {
               >
                 <div className="ml-3 border-l-2 border-[#6C994E]/20 pl-4">
                   <Link
-                    to="/media_stories"
+                    to="/impact-media"
                     onClick={closeMobileMenu}
                     className="block py-2.5 text-sm text-gray-600"
                   >
@@ -423,13 +423,13 @@ const Navbar = () => {
 
           {/* Mobile Actions */}
           <div className="mt-5 grid gap-3 sm:grid-cols-2">
-            {/* <Link
+            <Link
               to="/login"
               onClick={closeMobileMenu}
               className="flex items-center justify-center rounded-xl border border-[#073B4C] px-5 py-3 text-sm font-semibold text-[#073B4C] transition-colors hover:bg-[#F8FAF7]"
             >
               Sign In
-            </Link> */}
+            </Link>
 
             <Link
               to="/join"
