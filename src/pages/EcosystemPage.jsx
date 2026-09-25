@@ -452,7 +452,7 @@ const EcosystemPage = () => {
 
   const ecosystemNodes = [
     {
-      name: "Communities",
+      name: "Our Communities",
       icon: Users,
       description:
         "Community challenges, needs, knowledge, opportunities and participation form the starting point.",
@@ -466,7 +466,7 @@ const EcosystemPage = () => {
     },
 
     {
-      name: "Projects",
+      name: "Our Projects",
       icon: Target,
       description:
         "Projects translate community challenges into practical interventions and action.",
@@ -480,7 +480,7 @@ const EcosystemPage = () => {
     },
 
     {
-      name: "Programmes",
+      name: "Our Programmes",
       icon: BookOpen,
       description:
         "Programmes coordinate long-term interventions, training, learning and community transformation.",
@@ -494,7 +494,7 @@ const EcosystemPage = () => {
     },
 
     {
-      name: "People",
+      name: "Our People",
       icon: Users,
       description:
         "Farmers, students, researchers, entrepreneurs, mentors, investors and partners make the ecosystem work.",
@@ -508,7 +508,7 @@ const EcosystemPage = () => {
     },
 
     {
-      name: "Institutions",
+      name: "Our Institutions",
       icon: Landmark,
       description:
         "Universities, community organisations, government, NGOs, businesses and partners contribute capabilities.",
@@ -522,7 +522,7 @@ const EcosystemPage = () => {
     },
 
     {
-      name: "Enterprises",
+      name: "Our Enterprises",
       icon: Building2,
       description:
         "Enterprises create livelihoods and connect practical solutions with sustainable economic activity.",
@@ -540,7 +540,7 @@ const EcosystemPage = () => {
     },
 
     {
-      name: "Innovations",
+      name: "Our Innovations",
       icon: Lightbulb,
       description:
         "Technologies, products, processes and social innovations emerge from practical challenges and knowledge.",
@@ -554,7 +554,7 @@ const EcosystemPage = () => {
     },
 
     {
-      name: "Research",
+      name: "Our Research",
       icon: Telescope,
       description:
         "Research connects university knowledge and community realities to evidence, experimentation and learning.",
@@ -568,7 +568,7 @@ const EcosystemPage = () => {
     },
 
     {
-      name: "Opportunities",
+      name: "Our Opportunities",
       icon: CircleDollarSign,
       description:
         "Training, funding, research, partnerships, mentorship, markets and investment opportunities.",
@@ -582,7 +582,7 @@ const EcosystemPage = () => {
     },
 
     {
-      name: "Impact",
+      name: "Our Impact",
       icon: Sprout,
       description:
         "The ecosystem ultimately seeks sustainable community and socio-economic transformation.",
@@ -838,7 +838,7 @@ const EcosystemPage = () => {
 
             <p className="mx-auto mt-7 max-w-3xl text-base leading-8 text-white/65 sm:text-lg">
               Explore the living IGATI ecosystem connecting communities,
-              university, research, innovation, entrepreneurship, enterprises,
+              universities, researchers, innovators, social entrepreneurs, enterprises,
               markets, partners and opportunities.
             </p>
 
@@ -988,116 +988,6 @@ const EcosystemPage = () => {
         </div>
       </section>
 
-      {/* =========================================================
-          STEP 2 — GEOGRAPHY
-      ========================================================== */}
-      <section
-        id="geography"
-        className="scroll-mt-44 bg-[#F8FAF7] py-20 sm:py-24 lg:py-28"
-      >
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <StepLabel number="02" text="Explore the Ecosystems" />
-
-          <div className="mx-auto mt-6 max-w-3xl text-center">
-            <h2 className="text-3xl font-bold text-[#073B4C] sm:text-4xl">
-              Explore where IGATI works.
-            </h2>
-
-            <p className="mt-4 text-sm leading-7 text-gray-600 sm:text-base">
-              Move from the wider African mission into the flagship community
-              ecosystem in Meru County.
-            </p>
-          </div>
-
-          <div className="mt-12 grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-            {/* Drill-down pathway */}
-            <div className="rounded-[28px] border border-gray-100 bg-white p-6 shadow-sm sm:p-8">
-              <div className="space-y-3">
-                {geography.map((item, index) => {
-                  const active = activeGeo === item.name;
-
-                  return (
-                    <div key={item.name}>
-                      <button
-                        type="button"
-                        onClick={() => setActiveGeo(item.name)}
-                        className={`flex w-full items-center justify-between rounded-2xl border p-4 text-left transition-all ${
-                          active
-                            ? "border-[#6C994E]/30 bg-[#F2F7EE]"
-                            : "border-gray-100 bg-white hover:border-[#6C994E]/20"
-                        }`}
-                      >
-                        <div className="flex items-center gap-4">
-                          <div
-                            className={`flex h-10 w-10 items-center justify-center rounded-full text-xs font-bold ${
-                              active
-                                ? "bg-[#6C994E] text-white"
-                                : "bg-[#073B4C] text-[#F2B632]"
-                            }`}
-                          >
-                            {index + 1}
-                          </div>
-
-                          <span className="text-sm font-bold text-[#073B4C]">
-                            {item.name}
-                          </span>
-                        </div>
-
-                        <ChevronRight
-                          size={18}
-                          className={
-                            active ? "text-[#6C994E]" : "text-gray-300"
-                          }
-                        />
-                      </button>
-
-                      {index < geography.length - 1 && (
-                        <div className="ml-5 h-4 w-px bg-[#6C994E]/25" />
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Selected location */}
-            <div className="relative overflow-hidden rounded-[28px] bg-[#073B4C] p-7 text-white sm:p-8">
-              <div className="pointer-events-none absolute -right-20 -top-20 h-60 w-60 rounded-full bg-[#6C994E]/20 blur-3xl" />
-
-              <div className="relative">
-                <MapPin size={25} className="text-[#F2B632]" />
-
-                <p className="mt-5 text-[10px] font-bold uppercase tracking-[0.18em] text-[#F2B632]">
-                  Selected Ecosystem
-                </p>
-
-                <h3 className="mt-3 text-2xl font-bold">{activeGeo}</h3>
-
-                <p className="mt-4 text-sm leading-7 text-white/60">
-                  {
-                    geography.find((item) => item.name === activeGeo)
-                      ?.description
-                  }
-                </p>
-
-                {activeGeo === "Meru County" ||
-                activeGeo === "MUST–IGATI Community Ecosystem" ? (
-                  <button
-                    type="button"
-                    onClick={() => scrollToSection("must-igati")}
-                    className="mt-7 inline-flex items-center gap-2 rounded-xl bg-[#F2B632] px-5 py-3 text-xs font-bold text-[#073B4C]"
-                  >
-                    Enter MUST–IGATI Ecosystem
-                    <ArrowRight size={15} />
-                  </button>
-                ) : null}
-              </div>
-            </div>
-          </div>
-
-          <NextStep onClick={() => scrollToSection("must-igati")} />
-        </div>
-      </section>
 
       {/* =========================================================
           STEP 3 — MUST-IGATI
@@ -1167,7 +1057,7 @@ const EcosystemPage = () => {
             </div>
 
             {/* Selected relationship */}
-            {currentNode && (
+            {/* {currentNode && (
               <div className="mt-8 rounded-[26px] bg-[#073B4C] p-6 text-white sm:p-8">
                 <div className="grid gap-8 lg:grid-cols-[1fr_auto_1fr] lg:items-center">
                   <div>
@@ -1206,7 +1096,7 @@ const EcosystemPage = () => {
                   </div>
                 </div>
               </div>
-            )}
+            )} */}
           </div>
 
           {/* Bee hive exact worked example */}
