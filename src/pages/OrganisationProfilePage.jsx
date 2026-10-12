@@ -1,710 +1,609 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
 
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import {
-  Building2,
-  MapPin,
-  Globe2,
-  Mail,
-  Phone,
-  Users,
-  Handshake,
-  Target,
-  Lightbulb,
-  ShieldCheck,
-  Loader2,
   ArrowLeft,
-  UserPlus,
+  Building2,
+  CalendarDays,
   CheckCircle2,
-  X,
-  BriefcaseBusiness,
-  MessageSquare,
-  ExternalLink,
+  Mail,
+  MapPin,
+  Users,
+  LoaderCircle, 
+  ArrowRight, 
+  ShieldCheck
 } from "lucide-react";
 
-import { organisationApi } from "../api/organisationApi";
+import { apiRequest } from "../api/api";
+
+const API = import.meta.env.VITE_API_URL;
+
+const tabs = [
+  "Overview",
+  "Activities",
+  "Projects",
+  "Opportunities",
+  "Members",
+  "Join",
+];
 
 export default function OrganisationProfilePage() {
   const { slug } = useParams();
-  const navigate = useNavigate();
 
   const [organisation, setOrganisation] = useState(null);
+  const [activities, setActivities] = useState([]);
+  const [projects, setProjects] = useState([]);
+  const [opportunities, setOpportunities] = useState([]);
   const [members, setMembers] = useState([]);
-  const [posts, setPosts] = useState([]);
+  const [activeTab, setActiveTab] = useState("Overview");
 
   const [loading, setLoading] = useState(true);
-  const [joining, setJoining] = useState(false);
-
   const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState("");
+  const [formError, setFormError] = useState("");
 
-  const [showJoinModal, setShowJoinModal] = useState(false);
-  const [requestMessage, setRequestMessage] = useState("");
+  const [joinForm, setJoinForm] = useState({
+  full_name: "",
+  email: "",
+  phone: "",
+  message: "",
+});
+
+const [joinLoading, setJoinLoading] = useState(false);
+const [joinMessage, setJoinMessage] = useState("");
+
+  const [form, setForm] = useState({
+    full_name: "",
+    email: "",
+    phone: "",
+    message: "",
+  });
 
   useEffect(() => {
-    loadOrganisation();
-  }, [slug]);
+    let cancelled = false;
 
-  const loadOrganisation = async () => {
-    try {
+    async function loadOrganisation() {
       setLoading(true);
       setError("");
 
-      const response =
-        await organisationApi.getDetail(slug);
+      try {
+        // Public profile endpoint should support a slug or ID.
+        const detail = await apiRequest(
+          `/organisations/${encodeURIComponent(slug)}/`
+        );
 
-      const org =
-        response?.organisation || response;
+        if (cancelled) return;
 
-      setOrganisation(org);
+        const org = detail.organisation || detail;
+        setOrganisation(org);
 
-      setMembers(
-        Array.isArray(response?.members)
-          ? response.members
-          : []
-      );
+        // These endpoints should allow public GET requests for
+        // approved, public organisations.
+        const id = org.id;
 
-      setPosts(
-        Array.isArray(response?.posts)
-          ? response.posts
-          : []
-      );
-    } catch (err) {
-      setError(
-        err?.message ||
-          "Unable to load organisation."
-      );
-    } finally {
-      setLoading(false);
+        const results = await Promise.allSettled([
+          apiRequest(`/organisations/${id}/activities/`),
+          apiRequest(`/organisations/${id}/projects/`),
+          apiRequest(`/organisations/${id}/opportunities/`),
+          apiRequest(`/organisations/${id}/members/`),
+        ]);
+
+        if (cancelled) return;
+
+        const unwrap = (result, key) => {
+          if (result.status !== "fulfilled") return [];
+          const value = result.value;
+          if (Array.isArray(value)) return value;
+          return value?.[key] || value?.results || [];
+        };
+
+        setActivities(unwrap(results[0], "activities"));
+        setProjects(unwrap(results[1], "projects"));
+        setOpportunities(unwrap(results[2], "opportunities"));
+        setMembers(unwrap(results[3], "members"));
+      } catch (err) {
+        if (!cancelled) {
+          setError(
+            err.message ||
+              "Unable to load this organisation. Please try again."
+          );
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
     }
-  };
 
-  const handleJoin = async () => {
-    try {
-      setJoining(true);
-      setError("");
-      setSuccess("");
+    loadOrganisation();
 
-      const response =
-        await organisationApi.join(slug, {
-          request_message:
-            requestMessage.trim(),
-        });
+    return () => {
+      cancelled = true;
+    };
+  }, [slug]);
 
-      setSuccess(
-        response?.message ||
-          "Your membership request has been submitted."
-      );
+  const updateForm = (event) => {
+  const { name, value } = event.target;
 
-      setShowJoinModal(false);
-      setRequestMessage("");
-    } catch (err) {
-      setError(
-        err?.message ||
-          "Unable to submit membership request."
-      );
-    } finally {
-      setJoining(false);
-    }
-  };
+  setForm((previous) => ({
+    ...previous,
+    [name]: value,
+  }));
+};
+
+  const submitJoinRequest = async (e) => {
+  e.preventDefault();
+  setSubmitting(true);
+  setFormError("");
+  setSuccess("");
+
+  try {
+    const response = await apiRequest(
+      `/organisations/${encodeURIComponent(organisation.slug)}/join/`,
+      {
+        method: "POST",
+        body: JSON.stringify(form),
+      }
+    );
+
+    setSuccess(
+      response?.message ||
+        "Your membership request has been submitted successfully."
+    );
+
+    setForm({
+      full_name: "",
+      email: "",
+      phone: "",
+      message: "",
+    });
+  } catch (error) {
+    setFormError(
+      error?.message || "Failed to submit your request. Please try again."
+    );
+  } finally {
+    setSubmitting(false);
+  }
+};
 
   if (loading) {
     return (
-      <div className="min-h-[70vh] flex items-center justify-center bg-[#F8FAF7]">
-        <div className="text-center">
-          <Loader2 className="w-10 h-10 animate-spin text-[#07505E] mx-auto" />
-          <p className="mt-4 text-slate-600">
-            Loading organisation...
-          </p>
-        </div>
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <LoaderCircle className="animate-spin text-[#6C994E]" size={36} />
       </div>
     );
   }
 
-  if (error && !organisation) {
+  if (error || !organisation) {
     return (
-      <div className="min-h-[70vh] flex items-center justify-center bg-[#F8FAF7] px-4">
-        <div className="max-w-md w-full rounded-3xl border border-red-100 bg-white p-8 text-center">
-          <X className="w-10 h-10 text-red-500 mx-auto" />
-
-          <h2 className="mt-4 text-xl font-bold text-slate-900">
-            Unable to load organisation
-          </h2>
-
-          <p className="mt-2 text-sm text-slate-600">
-            {error}
-          </p>
-
-          <button
-            onClick={loadOrganisation}
-            className="mt-6 px-5 py-3 rounded-xl bg-[#07505E] text-white font-semibold"
-          >
-            Try Again
-          </button>
-        </div>
+      <div className="mx-auto max-w-2xl px-5 py-24 text-center">
+        <Building2 className="mx-auto text-gray-400" size={40} />
+        <h1 className="mt-5 text-2xl font-bold text-[#073B4C]">
+          Organisation unavailable
+        </h1>
+        <p className="mt-3 text-sm text-gray-600">
+          {error || "This organisation could not be found."}
+        </p>
+        <Link
+          to="/ecosystem"
+          className="mt-6 inline-flex items-center gap-2 font-semibold text-[#527A3A]"
+        >
+          <ArrowLeft size={16} /> Back to ecosystem
+        </Link>
       </div>
     );
   }
+
+  const description =
+    organisation.description ||
+    organisation.summary ||
+    "Learn about this organisation and its contribution to the IGATI ecosystem.";
 
   return (
-    <section className="min-h-screen bg-[#F8FAF7]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+    <main className="min-h-screen bg-[#F8FAF7] pb-20">
+      <div className="bg-[#073B4C] text-white">
+        <div className="mx-auto max-w-7xl px-4 pb-12 pt-6 sm:px-6 lg:px-8">
+          <Link
+            to="/ecosystem"
+            className="inline-flex items-center gap-2 text-sm text-white/70 hover:text-white"
+          >
+            <ArrowLeft size={16} /> Explore ecosystem
+          </Link>
 
-        <button
-          onClick={() => navigate(-1)}
-          className="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-[#07505E] mb-6"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back
-        </button>
-
-        {success && (
-          <div className="mb-6 rounded-2xl border border-green-200 bg-green-50 px-5 py-4 flex items-start gap-3">
-            <CheckCircle2 className="w-5 h-5 text-green-700 mt-0.5" />
-            <p className="text-sm font-medium text-green-800">
-              {success}
-            </p>
-          </div>
-        )}
-
-        {error && organisation && (
-          <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 px-5 py-4">
-            <p className="text-sm text-red-700">
-              {error}
-            </p>
-          </div>
-        )}
-
-        {/* Hero */}
-        <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
-
-          <div className="relative h-56 md:h-72 bg-gradient-to-br from-[#073B4C] via-[#07505E] to-[#6C994E]">
-            {organisation?.cover_image && (
-              <>
-                <img
-                  src={organisation.cover_image}
-                  alt={organisation.name}
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-[#073B4C]/50" />
-              </>
-            )}
-          </div>
-
-          <div className="px-6 md:px-8 pb-8">
-            <div className="-mt-16 relative z-10 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-
-              <div className="flex flex-col sm:flex-row sm:items-end gap-5">
-                <div className="w-32 h-32 rounded-3xl border-4 border-white bg-white shadow-lg overflow-hidden flex items-center justify-center shrink-0">
-                  {organisation?.logo ? (
-                    <img
-                      src={organisation.logo}
-                      alt={organisation.name}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <Building2 className="w-12 h-12 text-slate-400" />
-                  )}
-                </div>
-
-                <div className="pb-2">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h1 className="text-3xl md:text-4xl font-bold text-[#073B4C]">
-                      {organisation?.name}
-                    </h1>
-
-                    {organisation?.approval_status ===
-                      "approved" && (
-                      <ShieldCheck className="w-6 h-6 text-[#6C994E]" />
-                    )}
-                  </div>
-
-                  <p className="mt-2 text-[#07505E] font-semibold">
-                    {organisation?.organisation_type_display ||
-                      formatLabel(
-                        organisation?.organisation_type
-                      )}
-                  </p>
-
-                  {organisation?.tagline && (
-                    <p className="mt-2 text-slate-600">
-                      {organisation.tagline}
-                    </p>
-                  )}
-                </div>
+          <div className="mt-10 flex flex-col gap-6 sm:flex-row sm:items-center">
+            {organisation.logo ? (
+              <img
+                src={organisation.logo}
+                alt={`${organisation.name} logo`}
+                className="h-24 w-24 rounded-2xl bg-white object-contain p-2"
+              />
+            ) : (
+              <div className="flex h-24 w-24 items-center justify-center rounded-2xl bg-white/10 text-[#9BC36B]">
+                <Building2 size={42} />
               </div>
+            )}
 
-              <button
-                onClick={() => setShowJoinModal(true)}
-                className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[#07505E] text-white font-semibold hover:bg-[#073B4C] transition"
-              >
-                <UserPlus className="w-4 h-4" />
-                Join Organisation
-              </button>
-            </div>
+            <div className="flex-1">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#9BC36B]">
+                IGATI Ecosystem Organisation
+              </p>
 
-            <div className="mt-6 flex flex-wrap gap-x-6 gap-y-3 text-sm text-slate-500">
-              {organisation?.location?.name && (
-                <div className="inline-flex items-center gap-2">
-                  <MapPin className="w-4 h-4 text-[#07505E]" />
-                  {organisation.location.name}
-                </div>
+              <h1 className="mt-3 text-3xl font-bold sm:text-4xl">
+                {organisation.name}
+              </h1>
+
+              {organisation.tagline && (
+                <p className="mt-2 text-sm text-white/80">
+                  {organisation.tagline}
+                </p>
               )}
 
-              {organisation?.year_established && (
-                <div>
-                  Established{" "}
-                  {organisation.year_established}
-                </div>
-              )}
+              <div className="mt-4 flex flex-wrap gap-4 text-xs text-white/70">
+                {organisation.address && (
+                  <span className="flex items-center gap-1.5">
+                    <MapPin size={14} /> {organisation.address}
+                  </span>
+                )}
+
+                {organisation.email && (
+                  <a
+                    href={`mailto:${organisation.email}`}
+                    className="flex items-center gap-1.5 hover:text-white"
+                  >
+                    <Mail size={14} /> {organisation.email}
+                  </a>
+                )}
+              </div>
             </div>
+
+            <button
+              onClick={() => setActiveTab("Join")}
+              className="rounded-xl bg-[#F2B632] px-6 py-3 text-sm font-bold text-[#073B4C] transition hover:bg-[#ffd16b]"
+            >
+              Join this organisation
+            </button>
           </div>
         </div>
+      </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_330px] gap-8 mt-8">
-
-          {/* Main */}
-          <main className="space-y-6">
-
-            <Section
-              icon={Building2}
-              title="About"
+      <div className="sticky top-0 z-20 border-b border-gray-200 bg-white">
+        <div className="mx-auto flex max-w-7xl gap-2 overflow-x-auto px-4 sm:px-6 lg:px-8">
+          {tabs.map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`shrink-0 border-b-2 px-4 py-4 text-sm font-semibold transition ${
+                activeTab === tab
+                  ? "border-[#6C994E] text-[#073B4C]"
+                  : "border-transparent text-gray-500 hover:text-[#073B4C]"
+              }`}
             >
-              <TextValue
-                value={organisation?.description}
-                empty="No description available."
-              />
-            </Section>
+              {tab}
+            </button>
+          ))}
+        </div>
+      </div>
 
-            {(organisation?.mission ||
-              organisation?.vision) && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Section
-                  icon={Target}
-                  title="Mission"
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+        {activeTab === "Overview" && (
+          <div className="grid gap-8 lg:grid-cols-[1.5fr_0.7fr]">
+            <section className="rounded-2xl border border-gray-100 bg-white p-6 sm:p-8">
+              <h2 className="text-xl font-bold text-[#073B4C]">
+                About this organisation
+              </h2>
+              <p className="mt-4 whitespace-pre-line text-sm leading-7 text-gray-600">
+                {description}
+              </p>
+
+              {organisation.website && (
+                <a
+                  href={organisation.website}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-6 inline-block font-semibold text-[#527A3A] underline"
                 >
-                  <TextValue
-                    value={organisation?.mission}
-                    empty="No mission provided."
-                  />
-                </Section>
-
-                <Section
-                  icon={Lightbulb}
-                  title="Vision"
-                >
-                  <TextValue
-                    value={organisation?.vision}
-                    empty="No vision provided."
-                  />
-                </Section>
-              </div>
-            )}
-
-            <Section
-              icon={BriefcaseBusiness}
-              title="What We Do"
-            >
-              <TextValue
-                value={organisation?.what_we_do}
-                empty="No information provided yet."
-              />
-            </Section>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Section
-                icon={CheckCircle2}
-                title="What We Offer"
-              >
-                <TextValue
-                  value={organisation?.what_we_offer}
-                  empty="No offers listed yet."
-                />
-              </Section>
-
-              <Section
-                icon={Target}
-                title="What We Need"
-              >
-                <TextValue
-                  value={organisation?.what_we_need}
-                  empty="No needs listed yet."
-                />
-              </Section>
-            </div>
-
-            <Section
-              icon={Handshake}
-              title="Partnership Interests"
-            >
-              <TextValue
-                value={
-                  organisation?.partnership_interests
-                }
-                empty="No partnership interests listed yet."
-              />
-            </Section>
-
-            <Section
-              icon={Users}
-              title={`Members (${members.length})`}
-            >
-              {members.length === 0 ? (
-                <p className="text-sm text-slate-400 italic">
-                  No members are publicly listed yet.
-                </p>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {members.map((member) => (
-                    <MemberCard
-                      key={member.id}
-                      member={member}
-                      onClick={() =>
-                        navigate(
-                          `/people/${member.slug}`
-                        )
-                      }
-                    />
-                  ))}
-                </div>
+                  Visit website
+                </a>
               )}
-            </Section>
+            </section>
 
-            <Section
-              icon={MessageSquare}
-              title="Organisation Updates"
-            >
-              {posts.length === 0 ? (
-                <p className="text-sm italic text-slate-400">
-                  This organisation has not published any updates yet.
-                </p>
-              ) : (
-                <div className="space-y-4">
-                  {posts.map((post) => (
-                    <PostCard
-                      key={post.id}
-                      post={post}
-                    />
-                  ))}
-                </div>
-              )}
-            </Section>
-          </main>
-
-          {/* Sidebar */}
-          <aside className="space-y-6">
-
-            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-              <h3 className="font-bold text-[#073B4C]">
-                Contact
-              </h3>
+            <section className="rounded-2xl border border-gray-100 bg-white p-6">
+              <h2 className="text-lg font-bold text-[#073B4C]">
+                At a glance
+              </h2>
 
               <div className="mt-5 space-y-4">
-                <ContactItem
-                  icon={Mail}
-                  label="Email"
-                  value={organisation?.email}
-                />
+                {[
+                  [Users, members.length, "Members"],
+                  [Building2, projects.length, "Projects"],
+                  [CalendarDays, activities.length, "Activities"],
+                ].map(([Icon, count, label]) => (
+                  <div
+                    key={label}
+                    className="flex items-center justify-between rounded-xl bg-[#F8FAF7] p-4"
+                  >
+                    <span className="flex items-center gap-3 text-sm text-gray-600">
+                      <Icon size={18} className="text-[#6C994E]" />
+                      {label}
+                    </span>
+                    <strong className="text-lg text-[#073B4C]">
+                      {count}
+                    </strong>
+                  </div>
+                ))}
+              </div>
+            </section>
+          </div>
+        )}
 
-                <ContactItem
-                  icon={Phone}
-                  label="Phone"
-                  value={organisation?.phone}
-                />
+        {activeTab === "Activities" && (
+          <ContentList
+            title="Activities and achievements"
+            items={activities}
+            empty="This organisation has not published activities yet."
+          />
+        )}
 
-                <ContactItem
-                  icon={Globe2}
-                  label="Website"
-                  value={organisation?.website}
-                  link
-                />
+        {activeTab === "Projects" && (
+          <ContentList
+            title="Projects"
+            items={projects}
+            empty="No public projects are listed yet."
+          />
+        )}
 
-                <ContactItem
-                  icon={MapPin}
-                  label="Address"
-                  value={organisation?.address}
-                />
+        {activeTab === "Opportunities" && (
+          <ContentList
+            title="Opportunities"
+            items={opportunities}
+            empty="No public opportunities are listed yet."
+          />
+        )}
+
+        {activeTab === "Members" && (
+          <section>
+            <h2 className="text-2xl font-bold text-[#073B4C]">
+              Organisation members
+            </h2>
+
+            {members.length ? (
+              <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {members.map((member) => (
+                  <article
+                    key={member.id}
+                    className="flex items-center gap-4 rounded-2xl border border-gray-100 bg-white p-5"
+                  >
+                    {member.profile_image ? (
+                      <img
+                        src={member.profile_image}
+                        alt=""
+                        className="h-14 w-14 rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#EAF1E4] font-bold text-[#527A3A]">
+                        {(member.full_name || "M").charAt(0)}
+                      </div>
+                    )}
+                    <div>
+                      <h3 className="font-bold text-[#073B4C]">
+                        {member.full_name || "Organisation member"}
+                      </h3>
+                      <p className="mt-1 text-xs text-gray-500">
+                        {member.role || "Member"}
+                      </p>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <EmptyState text="Member profiles will appear here when available." />
+            )}
+          </section>
+        )}
+
+        {activeTab === "Join" && (
+          <section className="mx-auto max-w-2xl rounded-2xl border border-gray-100 bg-white p-6 sm:p-8">
+            <div className="flex items-start gap-4">
+              <div className="rounded-xl bg-[#EAF1E4] p-3 text-[#527A3A]">
+                <Users size={24} />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-[#073B4C]">
+                  Join {organisation.name}
+                </h2>
+                <p className="mt-2 text-sm leading-6 text-gray-600">
+                  Tell the organisation a little about yourself and why you
+                  would like to become a member. Your request will be reviewed
+                  by its team.
+                </p>
               </div>
             </div>
 
-            {organisation?.how_to_engage && (
-              <div className="rounded-3xl border border-[#07505E]/20 bg-[#07505E]/5 p-6">
-                <Handshake className="w-6 h-6 text-[#07505E]" />
-
-                <h3 className="mt-4 font-bold text-[#073B4C]">
-                  How to Engage
-                </h3>
-
-                <p className="mt-2 text-sm leading-6 text-slate-600">
-                  {organisation.how_to_engage}
-                </p>
+            {success ? (
+              <div className="mt-8 rounded-xl border border-green-200 bg-green-50 p-5 text-sm text-green-800">
+                <CheckCircle2 className="mb-2" size={22} />
+                {success}
               </div>
-            )}
-          </aside>
-        </div>
-      </div>
-
-      {showJoinModal && (
-        <JoinModal
-          organisationName={
-            organisation?.name
-          }
-          message={requestMessage}
-          setMessage={setRequestMessage}
-          loading={joining}
-          onClose={() =>
-            setShowJoinModal(false)
-          }
-          onSubmit={handleJoin}
-        />
-      )}
-    </section>
-  );
-}
-
-function Section({
-  icon: Icon,
-  title,
-  children,
-}) {
-  return (
-    <section className="rounded-3xl border border-slate-200 bg-white p-6 md:p-7 shadow-sm">
-      <div className="flex items-center gap-3 mb-5">
-        <div className="w-11 h-11 rounded-2xl bg-[#07505E]/10 flex items-center justify-center">
-          <Icon className="w-5 h-5 text-[#07505E]" />
-        </div>
-
-        <h2 className="text-xl font-bold text-[#073B4C]">
-          {title}
-        </h2>
-      </div>
-
-      {children}
-    </section>
-  );
-}
-
-function TextValue({ value, empty }) {
-  return (
-    <p className="text-slate-600 leading-7 whitespace-pre-line">
-      {value || (
-        <span className="italic text-slate-400">
-          {empty}
-        </span>
-      )}
-    </p>
-  );
-}
-
-function MemberCard({
-  member,
-  onClick,
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className="text-left flex items-center gap-4 rounded-2xl border border-slate-200 p-4 hover:border-[#07505E]/30 hover:bg-[#07505E]/5 transition"
-    >
-      <div className="w-12 h-12 rounded-xl bg-slate-100 overflow-hidden flex items-center justify-center shrink-0">
-        {member.profile_image ? (
-          <img
-            src={member.profile_image}
-            alt={member.full_name}
-            className="w-full h-full object-cover"
-          />
-        ) : (
-          <Users className="w-5 h-5 text-slate-400" />
-        )}
-      </div>
-
-      <div className="min-w-0">
-        <p className="font-semibold text-slate-900 truncate">
-          {member.full_name}
-        </p>
-
-        <p className="text-sm text-slate-500">
-          {member.role_display ||
-            formatLabel(member.role)}
-        </p>
-      </div>
-    </button>
-  );
-}
-
-function PostCard({ post }) {
-  return (
-    <article className="rounded-2xl border border-slate-200 p-5">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <span className="text-xs font-semibold uppercase tracking-wide text-[#07505E]">
-            {post.post_type_display ||
-              formatLabel(post.post_type)}
-          </span>
-
-          <h3 className="mt-1 font-bold text-slate-900">
-            {post.title}
-          </h3>
-        </div>
-
-        {post.created_at && (
-          <span className="text-xs text-slate-400 shrink-0">
-            {formatDate(post.created_at)}
-          </span>
-        )}
-      </div>
-
-      <p className="mt-3 text-sm text-slate-600 leading-6 whitespace-pre-line">
-        {post.content}
-      </p>
-    </article>
-  );
-}
-
-function ContactItem({
-  icon: Icon,
-  label,
-  value,
-  link = false,
-}) {
-  if (!value) return null;
-
-  return (
-    <div className="flex gap-3">
-      <div className="w-9 h-9 rounded-xl bg-[#07505E]/10 flex items-center justify-center shrink-0">
-        <Icon className="w-4 h-4 text-[#07505E]" />
-      </div>
-
-      <div className="min-w-0">
-        <p className="text-xs uppercase tracking-wide font-semibold text-slate-400">
-          {label}
-        </p>
-
-        {link ? (
-          <a
-            href={value}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-1 inline-flex items-center gap-1 text-sm font-medium text-[#07505E] hover:underline break-all"
-          >
-            {value}
-            <ExternalLink className="w-3 h-3" />
-          </a>
-        ) : (
-          <p className="mt-1 text-sm text-slate-600 break-words">
-            {value}
-          </p>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function JoinModal({
-  organisationName,
-  message,
-  setMessage,
-  loading,
-  onClose,
-  onSubmit,
-}) {
-  return (
-    <div className="fixed inset-0 z-[100] bg-slate-950/50 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="w-full max-w-lg rounded-3xl bg-white shadow-2xl overflow-hidden">
-
-        <div className="p-6 border-b border-slate-100 flex items-start justify-between">
-          <div>
-            <h2 className="text-xl font-bold text-[#073B4C]">
-              Join Organisation
-            </h2>
-
-            <p className="mt-1 text-sm text-slate-500">
-              {organisationName}
-            </p>
-          </div>
-
-          <button
-            onClick={onClose}
-            disabled={loading}
-            className="w-9 h-9 rounded-xl border border-slate-200 flex items-center justify-center"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-
-        <div className="p-6">
-          <p className="text-sm text-slate-600 leading-6">
-            Your request will be sent to the organisation administrators for review.
-          </p>
-
-          <label className="block mt-5">
-            <span className="text-sm font-semibold text-slate-800">
-              Message
-            </span>
-
-            <textarea
-              value={message}
-              onChange={(e) =>
-                setMessage(e.target.value)
-              }
-              rows={4}
-              placeholder="Introduce yourself and explain why you would like to join..."
-              className="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 outline-none resize-y focus:border-[#07505E] focus:ring-4 focus:ring-[#07505E]/10"
-            />
-          </label>
-        </div>
-
-        <div className="p-6 border-t border-slate-100 flex justify-end gap-3">
-          <button
-            onClick={onClose}
-            disabled={loading}
-            className="px-5 py-2.5 rounded-xl border border-slate-300 font-semibold text-slate-700"
-          >
-            Cancel
-          </button>
-
-          <button
-            onClick={onSubmit}
-            disabled={loading}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#07505E] text-white font-semibold hover:bg-[#073B4C] disabled:opacity-60"
-          >
-            {loading ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
             ) : (
-              <UserPlus className="w-4 h-4" />
-            )}
-            Send Request
-          </button>
-        </div>
-      </div>
+<form onSubmit={submitJoinRequest} className="mt-8 space-y-5">
+  {formError && (
+    <div
+      role="alert"
+      className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+    >
+      <span className="font-bold">!</span>
+      <p>{formError}</p>
     </div>
+  )}
+
+  {[
+    {
+      name: "full_name",
+      label: "Full name",
+      placeholder: "Enter your full name",
+      type: "text",
+      autoComplete: "name",
+    },
+    {
+      name: "email",
+      label: "Email address",
+      placeholder: "you@example.com",
+      type: "email",
+      autoComplete: "email",
+    },
+    {
+      name: "phone",
+      label: "Phone number",
+      placeholder: "+254 7XX XXX XXX",
+      type: "tel",
+      autoComplete: "tel",
+    },
+  ].map(({ name, label, placeholder, type, autoComplete }) => (
+    <div key={name}>
+      <label
+        htmlFor={`join-${name}`}
+        className="mb-2 block text-sm font-semibold text-[#073B4C]"
+      >
+        {label}
+        {name !== "phone" && (
+          <span className="ml-1 text-red-500">*</span>
+        )}
+      </label>
+
+      <input
+        id={`join-${name}`}
+        name={name}
+        type={type}
+        autoComplete={autoComplete}
+        required={name !== "phone"}
+        value={form[name]}
+        onChange={updateForm}
+        placeholder={placeholder}
+        disabled={submitting}
+        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3.5 text-sm text-[#16313B] outline-none transition placeholder:text-gray-400 focus:border-[#6C994E] focus:ring-4 focus:ring-[#6C994E]/10 disabled:cursor-not-allowed disabled:bg-gray-50"
+      />
+    </div>
+  ))}
+
+  <div>
+    <label
+      htmlFor="join-message"
+      className="mb-2 block text-sm font-semibold text-[#073B4C]"
+    >
+      Why would you like to join?
+      <span className="ml-1 text-red-500">*</span>
+    </label>
+
+    <textarea
+      id="join-message"
+      name="message"
+      value={form.message}
+      onChange={updateForm}
+      required
+      minLength={10}
+      maxLength={2000}
+      rows={5}
+      disabled={submitting}
+      placeholder="Tell us about your interests, experience, skills, and how you hope to contribute to this organisation..."
+      className="w-full resize-y rounded-xl border border-gray-200 bg-white px-4 py-3.5 text-sm leading-6 text-[#16313B] outline-none transition placeholder:text-gray-400 focus:border-[#6C994E] focus:ring-4 focus:ring-[#6C994E]/10 disabled:cursor-not-allowed disabled:bg-gray-50"
+    />
+
+    <p className="mt-2 text-xs text-gray-500">
+      Explain your interests and how you would like to contribute.
+    </p>
+  </div>
+
+  <button
+    type="submit"
+    disabled={submitting}
+    className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#073B4C] px-5 py-4 text-sm font-bold text-white shadow-sm transition hover:bg-[#07505E] focus:outline-none focus:ring-4 focus:ring-[#073B4C]/20 disabled:cursor-not-allowed disabled:opacity-60"
+  >
+    {submitting ? (
+      <>
+        <LoaderCircle size={18} className="animate-spin" />
+        Submitting your request...
+      </>
+    ) : (
+      <>
+        Submit membership request
+        <ArrowRight size={18} />
+      </>
+    )}
+  </button>
+
+  <div className="flex items-start gap-3 rounded-xl bg-[#F8FAF7] p-4">
+    <ShieldCheck
+      size={19}
+      className="mt-0.5 shrink-0 text-[#6C994E]"
+    />
+    <p className="text-xs leading-5 text-gray-600">
+      Your request will be sent to the organisation for review. Submitting
+      this form does not automatically make you a member. Membership is
+      subject to the organisation's approval.
+    </p>
+  </div>
+</form>
+            )}
+          </section>
+        )}
+      </div>
+    </main>
   );
 }
 
-function formatLabel(value) {
-  if (!value) return "";
+function ContentList({ title, items, empty }) {
+  return (
+    <section>
+      <h2 className="text-2xl font-bold text-[#073B4C]">{title}</h2>
 
-  return value
-    .replaceAll("_", " ")
-    .replace(/\b\w/g, (char) =>
-      char.toUpperCase()
-    );
+      {items.length ? (
+        <div className="mt-6 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {items.map((item) => (
+            <article
+              key={item.id}
+              className="rounded-2xl border border-gray-100 bg-white p-6 transition hover:-translate-y-1 hover:shadow-md"
+            >
+              <h3 className="text-lg font-bold text-[#073B4C]">
+                {item.title || item.name}
+              </h3>
+              <p className="mt-3 line-clamp-4 whitespace-pre-line text-sm leading-6 text-gray-600">
+                {item.description ||
+                  item.summary ||
+                  item.content ||
+                  "Explore this organisation's work and contribution."}
+              </p>
+              {(item.deadline || item.activity_date) && (
+                <p className="mt-4 text-xs text-gray-500">
+                  {item.deadline
+                    ? `Deadline: ${item.deadline}`
+                    : `Published: ${new Date(
+                        item.activity_date
+                      ).toLocaleDateString()}`}
+                </p>
+              )}
+              {item.application_url && (
+                <a
+                  href={item.application_url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-4 inline-block text-sm font-bold text-[#527A3A] underline"
+                >
+                  View opportunity
+                </a>
+              )}
+            </article>
+          ))}
+        </div>
+      ) : (
+        <EmptyState text={empty} />
+      )}
+    </section>
+  );
 }
 
-function formatDate(value) {
-  if (!value) return "";
-
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) {
-    return "";
-  }
-
-  return date.toLocaleDateString(
-    undefined,
-    {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    }
+function EmptyState({ text }) {
+  return (
+    <div className="mt-6 rounded-2xl border border-dashed border-gray-300 bg-white p-10 text-center text-sm text-gray-500">
+      {text}
+    </div>
   );
 }

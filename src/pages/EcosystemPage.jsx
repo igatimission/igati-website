@@ -1669,30 +1669,55 @@ const EcosystemPage = () => {
               </div>
 
               <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                {organisations.slice(0, 8).map((organisation) => (
-                  <div
-                    key={organisation.id}
-                    className="rounded-2xl border border-white/10 bg-white/[0.05] p-5"
-                  >
-                    <Landmark size={18} className="text-[#F2B632]" />
+                
+{organisations.slice(0, 8).map((organisation) => (
+  <Link
+    key={organisation.id}
+    to={`/organisations/${organisation.slug || organisation.id}`}
+    className="group rounded-2xl border border-white/10 bg-white/[0.04] p-5 transition hover:-translate-y-1 hover:border-[#9BC36B]/50 hover:bg-white/[0.08]"
+  >
+    <div className="flex items-start gap-4">
+      {organisation.logo ? (
+        <img
+          src={organisation.logo}
+          alt={`${organisation.name} logo`}
+          className="h-14 w-14 rounded-xl bg-white object-contain p-1"
+        />
+      ) : (
+        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-[#6C994E]/15 text-[#9BC36B]">
+          <Landmark size={26} />
+        </div>
+      )}
 
-                    <p className="mt-4 text-sm font-bold">
-                      {organisation.name}
-                    </p>
+      <div className="min-w-0 flex-1">
+        <h4 className="font-bold text-white transition group-hover:text-[#9BC36B]">
+          {organisation.name}
+        </h4>
 
-                    <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#9BC36B]">
-                      {organisation.organisation_type_display ||
-                        organisation.organisation_type}
-                    </p>
+        <p className="mt-2 line-clamp-3 text-xs leading-6 text-white/60">
+          {organisation.description ||
+            organisation.tagline ||
+            "Discover this organisation's work, people and opportunities."}
+        </p>
 
-                    {organisation.location && (
-                      <div className="mt-3 flex items-center gap-2 text-[10px] text-white/40">
-                        <MapPin size={11} />
-                        {organisation.location.name}
-                      </div>
-                    )}
-                  </div>
-                ))}
+        {organisation.organisation_type && (
+          <span className="mt-3 inline-block rounded-full bg-white/10 px-3 py-1 text-[10px] font-semibold text-[#9BC36B]">
+            {String(organisation.organisation_type).replaceAll("_", " ")}
+          </span>
+        )}
+
+        <div className="mt-4 flex items-center gap-2 text-xs font-bold text-[#F2B632]">
+          View organisation
+          <ArrowRight
+            size={14}
+            className="transition group-hover:translate-x-1"
+          />
+        </div>
+      </div>
+    </div>
+  </Link>
+))}
+
               </div>
             </div>
           )}

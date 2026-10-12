@@ -25,6 +25,7 @@ import MyOrganisationsPage from "../pages/MyOrganisationsPage";
 import ManageOrganisationMembersPage from "../pages/ManageOrganisationMembersPage";
 import OrganisationProfilePage from "../pages/OrganisationProfilePage";
 import CreateOrganisationPostPage from "../pages/CreateOrganisationPostPage";
+import OrganisationWorkspacePage from "../pages/OrganisationWorkspacePage";
 
 const AppRouter = () => {
   return (
@@ -61,6 +62,7 @@ const AppRouter = () => {
         <Route path="/my-organisations/:slug/members" element={<ManageOrganisationMembersPage />}/>
         <Route path="/organisations/:slug" element={<OrganisationProfilePage />}/>
         <Route path="/organisations/:slug/posts/create" element={<CreateOrganisationPostPage />}/>
+        <Route path="/organisation-workspace" element={<OrganisationWorkspacePage />}/>
 
         {/* <Route path="*" element={<NotFoundPage />} /> */}
       </Route>
