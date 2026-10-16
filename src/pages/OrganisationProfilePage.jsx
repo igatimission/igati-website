@@ -86,7 +86,7 @@ const [joinMessage, setJoinMessage] = useState("");
           apiRequest(`/organisations/${id}/activities/`),
           apiRequest(`/organisations/${id}/projects/`),
           apiRequest(`/organisations/${id}/opportunities/`),
-          apiRequest(`/organisations/${id}/members/`),
+          apiRequest(`/organisations/${encodeURIComponent(slug)}/members/`),
         ]);
 
         if (cancelled) return;
@@ -335,29 +335,34 @@ const [joinMessage, setJoinMessage] = useState("");
           </div>
         )}
 
-        {activeTab === "Activities" && (
-          <ContentList
-            title="Activities and achievements"
-            items={activities}
-            empty="This organisation has not published activities yet."
-          />
-        )}
+        
+{activeTab === "Activities" && (
+  <ContentList
+    title="Activities and achievements"
+    items={activities}
+    type="activity"
+    empty="This organisation has not published activities yet."
+  />
+)}
 
-        {activeTab === "Projects" && (
-          <ContentList
-            title="Projects"
-            items={projects}
-            empty="No public projects are listed yet."
-          />
-        )}
+{activeTab === "Projects" && (
+  <ContentList
+    title="Our projects"
+    items={projects}
+    type="project"
+    empty="No public projects are listed yet."
+  />
+)}
 
-        {activeTab === "Opportunities" && (
-          <ContentList
-            title="Opportunities"
-            items={opportunities}
-            empty="No public opportunities are listed yet."
-          />
-        )}
+{activeTab === "Opportunities" && (
+  <ContentList
+    title="Opportunities"
+    items={opportunities}
+    type="opportunity"
+    empty="No public opportunities are listed yet."
+  />
+)}
+
 
         {activeTab === "Members" && (
           <section>
@@ -550,55 +555,226 @@ const [joinMessage, setJoinMessage] = useState("");
   );
 }
 
-function ContentList({ title, items, empty }) {
+
+function ContentList({ title, items, empty, type = "activity" }) {
+  const getImage = (item) => {
+    const candidates =
+      type === "project"
+        ? [item.cover_image, item.image, item.featured_image, item.thumbnail]
+        : [
+            item.cover_image,
+            item.image,
+            item.featured_image,
+            item.banner_image,
+            item.thumbnail,
+          ];
+
+    return candidates.find(
+      (value) => typeof value === "string" && value.trim()
+    );
+  };
+
+  const getDate = (item) => {
+    const value =
+      item.deadline ||
+      item.start_date ||
+      item.activity_date ||
+      item.event_date ||
+      item.created_at;
+
+    if (!value) return null;
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) return null;
+
+    return date.toLocaleDateString(undefined, {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+  };
+
   return (
     <section>
-      <h2 className="text-2xl font-bold text-[#073B4C]">{title}</h2>
+      <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-end">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#6C994E]">
+            Explore our work
+          </p>
+          <h2 className="mt-2 text-2xl font-bold text-[#073B4C]">
+            {title}
+          </h2>
+        </div>
+
+        <p className="text-sm text-gray-500">
+          {items.length} {items.length === 1 ? "item" : "items"}
+        </p>
+      </div>
 
       {items.length ? (
-        <div className="mt-6 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {items.map((item) => (
-            <article
-              key={item.id}
-              className="rounded-2xl border border-gray-100 bg-white p-6 transition hover:-translate-y-1 hover:shadow-md"
-            >
-              <h3 className="text-lg font-bold text-[#073B4C]">
-                {item.title || item.name}
-              </h3>
-              <p className="mt-3 line-clamp-4 whitespace-pre-line text-sm leading-6 text-gray-600">
-                {item.description ||
-                  item.summary ||
-                  item.content ||
-                  "Explore this organisation's work and contribution."}
-              </p>
-              {(item.deadline || item.activity_date) && (
-                <p className="mt-4 text-xs text-gray-500">
-                  {item.deadline
-                    ? `Deadline: ${item.deadline}`
-                    : `Published: ${new Date(
-                        item.activity_date
-                      ).toLocaleDateString()}`}
-                </p>
-              )}
-              {item.application_url && (
-                <a
-                  href={item.application_url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="mt-4 inline-block text-sm font-bold text-[#527A3A] underline"
-                >
-                  View opportunity
-                </a>
-              )}
-            </article>
-          ))}
+        <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {items.map((item) => {
+            const image = getImage(item);
+            const itemTitle = item.title || item.name || "Untitled";
+            const description =
+              item.description ||
+              item.summary ||
+              item.content ||
+              "Discover more about this organisation's work and contribution.";
+
+            const date = getDate(item);
+
+            return (
+              <article
+                key={item.id || item.slug || itemTitle}
+                className="group flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:border-[#9BC36B] hover:shadow-xl"
+              >
+                {/* Image */}
+                <div className="relative h-52 overflow-hidden bg-gradient-to-br from-[#073B4C] to-[#07505E]">
+                  {image ? (
+                    <img
+                      src={image}
+                      alt={itemTitle}
+                      loading="lazy"
+                      className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                      onError={(event) => {
+                        event.currentTarget.style.display = "none";
+                      }}
+                    />
+                  ) : (
+                    <div className="flex h-full flex-col items-center justify-center px-6 text-center text-white">
+                      <Building2
+                        size={36}
+                        className="text-[#9BC36B]"
+                      />
+                      <p className="mt-3 text-sm font-semibold text-white/90">
+                        IGATI Global Mission Network
+                      </p>
+                      <p className="mt-1 text-xs text-white/60">
+                        {type === "project"
+                          ? "Project"
+                          : type === "opportunity"
+                            ? "Opportunity"
+                            : "Organisation activity"}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Category */}
+                  <div className="absolute left-4 top-4">
+                    <span className="rounded-full border border-white/30 bg-[#073B4C]/85 px-3 py-1.5 text-xs font-semibold capitalize text-white backdrop-blur-sm">
+                      {item.opportunity_type ||
+                        item.post_type ||
+                        item.status ||
+                        (type === "project"
+                          ? "Project"
+                          : type === "opportunity"
+                            ? "Opportunity"
+                            : "Activity")}
+                    </span>
+                  </div>
+
+                  {item.is_featured && (
+                    <div className="absolute right-4 top-4">
+                      <span className="rounded-full bg-[#F2B632] px-3 py-1.5 text-xs font-bold text-[#073B4C]">
+                        Featured
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Content */}
+                <div className="flex flex-1 flex-col p-5 sm:p-6">
+                  <h3 className="text-lg font-bold leading-snug text-[#073B4C] transition group-hover:text-[#527A3A]">
+                    {itemTitle}
+                  </h3>
+
+                  <p className="mt-3 line-clamp-4 whitespace-pre-line text-sm leading-6 text-gray-600">
+                    {description}
+                  </p>
+
+                  {item.eligibility && type === "opportunity" && (
+                    <div className="mt-4 rounded-xl bg-[#F8FAF7] p-3">
+                      <p className="text-xs font-bold uppercase tracking-wide text-[#527A3A]">
+                        Eligibility
+                      </p>
+                      <p className="mt-1 line-clamp-2 text-sm text-gray-600">
+                        {item.eligibility}
+                      </p>
+                    </div>
+                  )}
+
+                  <div className="mt-auto">
+                    {(date || item.location) && (
+                      <div className="mt-5 flex flex-wrap gap-x-4 gap-y-2 border-t border-gray-100 pt-4 text-xs text-gray-500">
+                        {date && (
+                          <span className="flex items-center gap-1.5">
+                            <CalendarDays size={14} className="text-[#6C994E]" />
+                            {type === "opportunity" && item.deadline
+                              ? `Deadline: ${date}`
+                              : date}
+                          </span>
+                        )}
+
+                        {item.location && (
+                          <span className="flex items-center gap-1.5">
+                            <MapPin size={14} className="text-[#6C994E]" />
+                            {typeof item.location === "string"
+                              ? item.location
+                              : item.location.name || item.location.title || ""}
+                          </span>
+                        )}
+                      </div>
+                    )}
+
+                    {type === "opportunity" && item.application_url && (
+                      <a
+                        href={item.application_url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#073B4C] px-4 py-3 text-sm font-bold text-white transition hover:bg-[#07505E]"
+                      >
+                        View opportunity
+                        <ArrowRight size={16} />
+                      </a>
+                    )}
+
+                    {type !== "opportunity" && item.external_url && (
+                      <a
+                        href={item.external_url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-[#527A3A] hover:text-[#073B4C]"
+                      >
+                        Learn more
+                        <ArrowRight size={16} />
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </article>
+            );
+          })}
         </div>
       ) : (
-        <EmptyState text={empty} />
+        <div className="mt-6 rounded-2xl border border-dashed border-gray-300 bg-white px-5 py-14 text-center">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#EAF1E4] text-[#527A3A]">
+            <Building2 size={28} />
+          </div>
+          <h3 className="mt-4 font-bold text-[#073B4C]">
+            Nothing published yet
+          </h3>
+          <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-gray-500">
+            {empty}
+          </p>
+        </div>
       )}
     </section>
   );
 }
+
+
 
 function EmptyState({ text }) {
   return (

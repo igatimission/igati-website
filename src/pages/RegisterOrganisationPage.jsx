@@ -64,20 +64,26 @@ const initialForm = {
 
   year_established: "",
   registration_number: "",
-  registration_document: "",
+  // registration_document: "",
 
   website: "",
   email: "",
   phone: "",
 
-  logo: "",
-  cover_image: "",
+  // logo: "",
+  // cover_image: "",
 };
 
 export default function RegisterOrganisationPage() {
   const navigate = useNavigate();
 
   const [form, setForm] = useState(initialForm);
+
+  const [files, setFiles] = useState({
+  registration_document: null,
+  logo: null,
+  cover_image: null,
+});
 
   const [locations, setLocations] = useState([]);
   const [loadingLocations, setLoadingLocations] =
@@ -118,6 +124,47 @@ export default function RegisterOrganisationPage() {
     }
   };
 
+  const handleFileChange = (e) => {
+  const { name, files: selectedFiles } = e.target;
+  const file = selectedFiles?.[0];
+
+  if (!file) return;
+
+  const isDocument = name === "registration_document";
+  const allowedTypes = isDocument
+    ? ["application/pdf"]
+    : ["image/jpeg", "image/png", "image/webp"];
+
+  const maxSize = isDocument ? 10 * 1024 * 1024 : 5 * 1024 * 1024;
+
+  if (!allowedTypes.includes(file.type)) {
+    setError(
+      isDocument
+        ? "Please upload a PDF document."
+        : "Please upload a JPG, PNG or WebP image."
+    );
+    e.target.value = "";
+    return;
+  }
+
+  if (file.size > maxSize) {
+    setError(
+      isDocument
+        ? "The document must not exceed 10 MB."
+        : "Each image must not exceed 5 MB."
+    );
+    e.target.value = "";
+    return;
+  }
+
+  setError("");
+
+  setFiles((prev) => ({
+    ...prev,
+    [name]: file,
+  }));
+};
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -153,22 +200,46 @@ export default function RegisterOrganisationPage() {
   };
 
   const createOrganisation = async () => {
-    const payload = {
-      ...form,
+  const payload = new FormData();
 
-      location_id:
-        form.location_id || null,
+  Object.entries(form).forEach(([key, value]) => {
+    if (["registration_document", "logo", "cover_image"].includes(key)) {
+      return;
+    }
 
-      year_established:
-        form.year_established
-          ? Number(form.year_established)
-          : null,
-    };
+    if (key === "location_id") {
+      payload.append(key, value || "");
+      return;
+    }
 
-    return organisationApi.create(
-      payload
+    if (key === "year_established") {
+      payload.append(key, value || "");
+      return;
+    }
+
+    payload.append(key, value ?? "");
+  });
+
+  if (files.registration_document) {
+    payload.append(
+      "registration_document",
+      files.registration_document
     );
-  };
+  }
+
+  if (files.logo) {
+    payload.append("logo", files.logo);
+  }
+
+  if (files.cover_image) {
+    payload.append("cover_image", files.cover_image);
+  }
+
+  console.log("Organisation name:", payload.get("name"));
+  console.log("FormData entries:", [...payload.entries()]);
+
+  return organisationApi.create(payload);
+};
 
   const handleSaveDraft = async (e) => {
     e.preventDefault();
@@ -533,13 +604,14 @@ export default function RegisterOrganisationPage() {
               />
             </div>
 
-            <InputField
-              label="Registration / Supporting Document URL"
-              name="registration_document"
-              value={form.registration_document}
-              onChange={handleChange}
-              placeholder="https://..."
-            />
+            <FileUploadField
+  label="Registration / Supporting Document"
+  name="registration_document"
+  accept=".pdf,application/pdf"
+  file={files.registration_document}
+  onChange={handleFileChange}
+  hint="Upload an official registration certificate or supporting document. PDF only, maximum 10 MB."
+/>
 
             <div className="rounded-2xl bg-amber-50 border border-amber-200 px-4 py-3">
               <div className="flex gap-3">
@@ -598,23 +670,25 @@ export default function RegisterOrganisationPage() {
             title="Organisation Branding"
             description="Add organisation images to improve its public profile."
           >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <InputField
-                label="Logo URL"
-                name="logo"
-                value={form.logo}
-                onChange={handleChange}
-                placeholder="https://..."
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+  <FileUploadField
+    label="Organisation Logo"
+    name="logo"
+    accept="image/png,image/jpeg,image/webp"
+    file={files.logo}
+    onChange={handleFileChange}
+    hint="PNG, JPG or WebP. Maximum 5 MB."
+  />
 
-              <InputField
-                label="Cover Image URL"
-                name="cover_image"
-                value={form.cover_image}
-                onChange={handleChange}
-                placeholder="https://..."
-              />
-            </div>
+  <FileUploadField
+    label="Cover Image"
+    name="cover_image"
+    accept="image/png,image/jpeg,image/webp"
+    file={files.cover_image}
+    onChange={handleFileChange}
+    hint="PNG, JPG or WebP. Maximum 5 MB."
+  />
+</div>
 
             {(form.logo ||
               form.cover_image) && (
@@ -931,6 +1005,88 @@ function ImagePreview({
     </div>
   );
 }
+
+
+
+
+function FileUploadField({
+  label,
+  name,
+  accept,
+  file,
+  onChange,
+  hint,
+}) {
+  const [preview, setPreview] = useState("");
+
+  useEffect(() => {
+    if (!file || !file.type.startsWith("image/")) {
+      setPreview("");
+      return;
+    }
+
+    const objectUrl = URL.createObjectURL(file);
+    setPreview(objectUrl);
+
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [file]);
+
+  return (
+    <div>
+      <label className="block">
+        <span className="text-sm font-semibold text-slate-800">
+          {label}
+        </span>
+
+        <div className="mt-2 rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 p-5 transition hover:border-[#07505E] hover:bg-[#07505E]/5">
+          <input
+            type="file"
+            name={name}
+            accept={accept}
+            onChange={onChange}
+            className="block w-full cursor-pointer text-sm text-slate-600 file:mr-4 file:rounded-xl file:border-0 file:bg-[#07505E] file:px-4 file:py-2.5 file:font-semibold file:text-white hover:file:bg-[#073B4C]"
+          />
+
+          <p className="mt-3 text-xs leading-5 text-slate-500">
+            {hint}
+          </p>
+        </div>
+      </label>
+
+      {file && (
+        <div className="mt-3 rounded-xl border border-slate-200 bg-white p-3">
+          {preview && (
+            <img
+              src={preview}
+              alt={`${label} preview`}
+              className={
+                name === "logo"
+                  ? "h-28 w-28 rounded-xl border border-slate-200 bg-white object-contain"
+                  : "h-40 w-full rounded-xl object-cover"
+              }
+            />
+          )}
+
+          <div className="mt-2 flex items-center gap-2 text-sm text-slate-700">
+            <FileText className="h-4 w-4 shrink-0 text-[#07505E]" />
+            <span className="break-all">{file.name}</span>
+          </div>
+
+          <p className="mt-1 text-xs text-slate-500">
+            {(file.size / (1024 * 1024)).toFixed(2)} MB
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+
+
+
+
+
+
 
 function formatLabel(value) {
   if (!value) return "";

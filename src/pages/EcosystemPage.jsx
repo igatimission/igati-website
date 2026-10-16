@@ -1135,6 +1135,100 @@ const EcosystemPage = () => {
             </div>
           </div>
 
+
+{/* =========================================================
+    FLAGSHIP PROGRAMME — APICULTURE
+========================================================== */}
+<div className="relative mt-8 overflow-hidden rounded-[30px] bg-[#073B4C] text-white shadow-xl">
+  <div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-[#6C994E]/20 blur-3xl" />
+
+  <div className="relative grid gap-8 p-6 sm:p-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center lg:p-10">
+    <div>
+      <div className="inline-flex items-center gap-2 rounded-full border border-[#9BC36B]/20 bg-white/[0.06] px-3 py-2">
+        <Leaf size={15} className="text-[#9BC36B]" />
+        <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#9BC36B]">
+          Flagship Living Laboratory
+        </span>
+      </div>
+
+      <h3 className="mt-5 text-2xl font-bold leading-tight sm:text-3xl">
+        Meru County Communities
+        <span className="block text-[#F2B632]">
+          Apiculture Programme
+        </span>
+      </h3>
+
+      <p className="mt-4 text-sm leading-7 text-white/65">
+        Connecting beekeepers, community groups, researchers,
+        trainers, suppliers and buyers to build a productive,
+        knowledge-driven and sustainable bee-products value chain
+        across Meru County.
+      </p>
+
+      <p className="mt-4 text-sm font-semibold text-[#9BC36B]">
+        One Million Productive Bee Hives · 2026–2036
+      </p>
+
+      <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+        <Link
+          to="/ecosystem/apiculture"
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#F2B632] px-5 py-3.5 text-sm font-bold text-[#073B4C] transition hover:-translate-y-0.5 hover:bg-[#e4aa26]"
+        >
+          Explore the Programme
+          <ArrowRight size={16} />
+        </Link>
+
+        <Link
+          to="/ecosystem/apiculture#join"
+          className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/[0.05] px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-white/10"
+        >
+          Join the Programme
+          <Users size={16} />
+        </Link>
+      </div>
+    </div>
+
+    <div className="grid gap-3 sm:grid-cols-2">
+      {[
+        {
+          icon: Users,
+          title: "Farmers & Groups",
+          text: "Register participants and community organisations.",
+        },
+        {
+          icon: Handshake,
+          title: "Partners & Researchers",
+          text: "Connect expertise, training and collaboration.",
+        },
+        {
+          icon: Leaf,
+          title: "Bee Products",
+          text: "Build visibility for honey and other bee products.",
+        },
+        {
+          icon: MapPin,
+          title: "Community Impact",
+          text: "Support responsible, ward-level programme monitoring.",
+        },
+      ].map(({ icon: Icon, title, text }) => (
+        <div
+          key={title}
+          className="rounded-2xl border border-white/10 bg-white/[0.05] p-4"
+        >
+          <Icon size={21} className="text-[#F2B632]" />
+
+          <h4 className="mt-3 text-sm font-bold">{title}</h4>
+
+          <p className="mt-2 text-xs leading-6 text-white/50">
+            {text}
+          </p>
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
+
+
           <NextStep onClick={() => scrollToSection("living-labs")} />
         </div>
       </section>
@@ -2216,6 +2310,14 @@ const EcosystemPage = () => {
               to="/projects"
               icon={HandHeart}
             />
+
+<ActionCard
+  title="Join the Apiculture Programme"
+  description="For beekeepers, farmer groups, cooperatives, suppliers, buyers, researchers and partners interested in Meru County's bee-products value chain."
+  to="/ecosystem/apiculture"
+  icon={Leaf}
+/>
+
           </div>
 
           <div className="mt-14 border-t border-white/10 pt-8 text-center">

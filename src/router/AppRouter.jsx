@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 
 import PublicLayout from "../layouts/PublicLayout";
+import OrganisationAdminLayout from "../layouts/OrganisationAdminLayout";
 
 import Home from "../pages/Home";
 import AboutPage from "../pages/AboutPage";
@@ -26,6 +27,21 @@ import ManageOrganisationMembersPage from "../pages/ManageOrganisationMembersPag
 import OrganisationProfilePage from "../pages/OrganisationProfilePage";
 import CreateOrganisationPostPage from "../pages/CreateOrganisationPostPage";
 import OrganisationWorkspacePage from "../pages/OrganisationWorkspacePage";
+
+import ApicultureProgrammePage from "../pages/ApicultureProgrammePage";
+
+
+// import OrganisationDashboardPage from "../pages/OrganisationDashboardPage";
+
+import DashboardHomePage from "../pages/organisation_admin/OrganizationDashboard";
+import MembershipRequestsPage from "../pages/organisation_admin/OrganisationMembership";
+import OrganisationPostsPage from "../pages/organisation_admin/OrganisationPosts";
+import OrganisationProjectsPage from "../pages/organisation_admin/OrganisationProjects";
+import OrganisationOpportunitiesPage from "../pages/organisation_admin/OrganisationOpportunities";
+import OrganisationSettingsPage from "../pages/organisation_admin/OrganisationSettings";
+import OrganisationNotFoundPage from "../pages/organisation_admin/OrganisationNotFound";
+
+
 
 const AppRouter = () => {
   return (
@@ -63,9 +79,24 @@ const AppRouter = () => {
         <Route path="/organisations/:slug" element={<OrganisationProfilePage />}/>
         <Route path="/organisations/:slug/posts/create" element={<CreateOrganisationPostPage />}/>
         <Route path="/organisation-workspace" element={<OrganisationWorkspacePage />}/>
+        <Route path="/ecosystem/apiculture" element={<ApicultureProgrammePage />}/>
 
         {/* <Route path="*" element={<NotFoundPage />} /> */}
       </Route>
+
+      {/* <Route path="/organisations/:slug/dashboard" element={<OrganisationDashboardPage />}/> */}
+
+      <Route path="/organisations/:slug/dashboard" element={<OrganisationAdminLayout />}>
+          <Route index element={<DashboardHomePage />} />
+          <Route path="members" element={<MembershipRequestsPage />} />
+          <Route path="posts" element={<OrganisationPostsPage />} />
+          <Route path="projects" element={<OrganisationProjectsPage />} />
+          <Route path="opportunities" element={<OrganisationOpportunitiesPage />} />
+          <Route path="settings" element={<OrganisationSettingsPage />} />
+          <Route path="*" element={<OrganisationNotFoundPage />} />
+      </Route>
+
+
     </Routes>
   );
 };

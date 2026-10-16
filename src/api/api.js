@@ -1,5 +1,5 @@
 const API_URL =
-  import.meta.env.VITE_API_URL || "https://igati-backend.onrender.com/api";
+  import.meta.env.VITE_API_URL || "http://192.168.100.12:8000/api";
 
 
 // ============================================================

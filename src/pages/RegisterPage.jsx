@@ -97,7 +97,7 @@ const RegisterPage = () => {
         phone_number: form.phone_number.trim(),
       });
 
-      navigate("/marketplace");
+      navigate("/profile?registered=true");
     } catch (err) {
       setError(err.message);
     } finally {

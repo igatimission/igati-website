@@ -73,7 +73,7 @@ export default function OrganisationProfilePage() {
           apiRequest(`/organisations/${id}/activities/`),
           apiRequest(`/organisations/${id}/projects/`),
           apiRequest(`/organisations/${id}/opportunities/`),
-          apiRequest(`/organisations/${id}/members/`),
+          apiRequest(`/organisations/${encodeURIComponent(slug)}/members/`),
         ]);
 
         if (cancelled) return;

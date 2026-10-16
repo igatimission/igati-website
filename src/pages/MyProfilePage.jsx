@@ -25,6 +25,7 @@ import {
 import { FaLinkedin } from "react-icons/fa6";
 
 import { profileApi } from "../api/profileApi";
+import { organisationApi } from "../api/organisationApi";
 
 import { useNavigate } from "react-router-dom";
 
@@ -78,9 +79,23 @@ export default function MyProfilePage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
+  const [myOrganisations, setMyOrganisations] = useState([]);
+
   useEffect(() => {
     loadProfile();
+    loadMyOrganisations();
   }, []);
+
+  const loadMyOrganisations = async () => {
+  try {
+    const response = await organisationApi.getMine();
+
+    setMyOrganisations(response?.organisations || []);
+  } catch (err) {
+    console.error("Unable to load managed organisations:", err);
+    setMyOrganisations([]);
+  }
+};
 
   const loadProfile = async () => {
     try {
@@ -360,6 +375,24 @@ export default function MyProfilePage() {
   <Building2 className="w-4 h-4" />
   Register Organisation
 </button>
+
+
+{myOrganisations.length > 0 && (
+  <button
+    onClick={() =>
+      navigate(
+        `/organisations/${myOrganisations[0].slug}/dashboard`
+      )
+    }
+    className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[#07505E] text-white font-semibold hover:bg-[#073B4C] transition"
+  >
+    <Building2 className="w-4 h-4" />
+    Manage Organisation
+  </button>
+)}
+
+
+
         </div>
 
         {success && (

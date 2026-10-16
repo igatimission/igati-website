@@ -16,7 +16,7 @@ export const organisationApi = {
       "/organisations/create/",
       {
         method: "POST",
-        body: JSON.stringify(data),
+        body: data,
       }
     ),
 
