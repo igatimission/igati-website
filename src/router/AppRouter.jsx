@@ -41,6 +41,10 @@ import OrganisationOpportunitiesPage from "../pages/organisation_admin/Organisat
 import OrganisationSettingsPage from "../pages/organisation_admin/OrganisationSettings";
 import OrganisationNotFoundPage from "../pages/organisation_admin/OrganisationNotFound";
 
+import MarketplaceDashboard from "../pages/organisation_admin/marketplace/MarketplaceDashboard";
+import MarketplaceProducts from "../pages/organisation_admin/marketplace/MarketplaceProducts";
+import MarketplaceProductForm from "../pages/organisation_admin/marketplace/MarketplaceProductForm";
+
 
 
 const AppRouter = () => {
@@ -92,6 +96,10 @@ const AppRouter = () => {
           <Route path="posts" element={<OrganisationPostsPage />} />
           <Route path="projects" element={<OrganisationProjectsPage />} />
           <Route path="opportunities" element={<OrganisationOpportunitiesPage />} />
+          <Route path="marketplace" element={<MarketplaceDashboard />}/>
+          <Route path="marketplace/products" element={<MarketplaceProducts />} />
+          <Route path="marketplace/products/new" element={<MarketplaceProductForm />} />
+          <Route path="marketplace/products/:id/edit" element={<MarketplaceProductForm />} />
           <Route path="settings" element={<OrganisationSettingsPage />} />
           <Route path="*" element={<OrganisationNotFoundPage />} />
       </Route>

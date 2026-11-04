@@ -10,6 +10,7 @@ const links = [
   { label: "Posts & activities", path: "posts", icon: Newspaper },
   { label: "Projects", path: "projects", icon: FolderKanban },
   { label: "Opportunities", path: "opportunities", icon: BriefcaseBusiness },
+  { label: "Marketplace", path: "marketplace", icon: BriefcaseBusiness },
   { label: "Organisation details", path: "settings", icon: Settings },
 ];
 
