@@ -27,7 +27,6 @@ export const organisationMarketplaceApi = {
   uploadProductImage: async (slug, file) => {
     
     const baseUrl =  import.meta.env.VITE_API_URL || "https://igati-backend.onrender.com/api";
-    // VITE_API_URL should point to the same API root as apiRequest (usually /api).
     const formData = new FormData();
     formData.append("image", file);
     const token = localStorage.getItem("igati_access_token");
