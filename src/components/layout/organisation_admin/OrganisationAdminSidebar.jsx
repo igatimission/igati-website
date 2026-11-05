@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom";
 import {
   LayoutDashboard, Users, Building2, Newspaper, FolderKanban,
-  BriefcaseBusiness, Settings, ExternalLink,
+  BriefcaseBusiness, Settings, ExternalLink, Store,
 } from "lucide-react";
 
 const links = [
@@ -10,7 +10,7 @@ const links = [
   { label: "Posts & activities", path: "posts", icon: Newspaper },
   { label: "Projects", path: "projects", icon: FolderKanban },
   { label: "Opportunities", path: "opportunities", icon: BriefcaseBusiness },
-  { label: "Marketplace", path: "marketplace", icon: BriefcaseBusiness },
+  { label: "Marketplace", path: "marketplace", icon: Store },
   { label: "Organisation details", path: "settings", icon: Settings },
 ];
 
