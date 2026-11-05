@@ -47,6 +47,9 @@ import MarketplaceProductForm from "../pages/organisation_admin/marketplace/Mark
 import MarketplaceOrders from "../pages/organisation_admin/marketplace/MarketplaceOrders";
 import MarketplaceInventory from "../pages/organisation_admin/marketplace/MarketplaceInventory";
 import MarketplaceCustomers from "../pages/organisation_admin/marketplace/MarketplaceCustomers";
+import MarketplacePayments from "../pages/organisation_admin/marketplace/MarketplacePayments";
+import MarketplaceAnalytics from "../pages/organisation_admin/marketplace/MarketplaceAnalytics";
+
 
 import { CartProvider } from "../context/CartContext";
 
@@ -126,6 +129,8 @@ const AppRouter = () => {
           <Route path="marketplace/orders" element={<MarketplaceOrders />} />
           <Route path="marketplace/inventory" element={<MarketplaceInventory />} />
           <Route path="marketplace/customers" element={<MarketplaceCustomers />} />
+          <Route path="marketplace/payments" element={<MarketplacePayments />} />
+          <Route path="marketplace/analytics" element={<MarketplaceAnalytics />} />
           <Route path="settings" element={<OrganisationSettingsPage />} />
           <Route path="*" element={<OrganisationNotFoundPage />} />
       </Route>

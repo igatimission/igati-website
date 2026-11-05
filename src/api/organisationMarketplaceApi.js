@@ -164,4 +164,25 @@ customerDetail: (slug, customerKey) =>
   apiRequest(
     `${base(slug)}/customers/${encodeURIComponent(customerKey)}/`
   ),
+
+
+  payments: (slug, filters = {}) =>
+  apiRequest(
+    `${base(slug)}/payments/${queryString(filters)}`
+  ),
+
+paymentDetail: (slug, id) =>
+  apiRequest(
+    `${base(slug)}/payments/${encodeURIComponent(id)}/`
+  ),
+
+
+
+  analytics: (slug, filters = {}) =>
+  apiRequest(
+    `${base(slug)}/analytics/${queryString(filters)}`
+  ),
+
+
+
 };
