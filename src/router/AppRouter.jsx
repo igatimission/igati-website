@@ -44,11 +44,19 @@ import OrganisationNotFoundPage from "../pages/organisation_admin/OrganisationNo
 import MarketplaceDashboard from "../pages/organisation_admin/marketplace/MarketplaceDashboard";
 import MarketplaceProducts from "../pages/organisation_admin/marketplace/MarketplaceProducts";
 import MarketplaceProductForm from "../pages/organisation_admin/marketplace/MarketplaceProductForm";
+import MarketplaceOrders from "../pages/organisation_admin/marketplace/MarketplaceOrders";
+import MarketplaceInventory from "../pages/organisation_admin/marketplace/MarketplaceInventory";
+import MarketplaceCustomers from "../pages/organisation_admin/marketplace/MarketplaceCustomers";
 
+import { CartProvider } from "../context/CartContext";
 
+import MarketplaceProductDetails from "../pages/marketplace/MarketplaceProductDetails";
+import MarketplaceCart from "../pages/marketplace/MarketplaceCart";
+import MarketplaceCheckout from "../pages/marketplace/MarketplaceCheckout";
 
 const AppRouter = () => {
   return (
+    <CartProvider>
     <Routes>
       <Route element={<PublicLayout />}>
         <Route path="/" element={<Home />} />
@@ -85,6 +93,21 @@ const AppRouter = () => {
         <Route path="/organisation-workspace" element={<OrganisationWorkspacePage />}/>
         <Route path="/ecosystem/apiculture" element={<ApicultureProgrammePage />}/>
 
+        <Route
+      path="/marketplace/:slug"
+      element={<MarketplaceProductDetails />}
+    />
+
+    <Route
+      path="/marketplace/cart"
+      element={<MarketplaceCart />}
+    />
+
+    <Route
+      path="/marketplace/checkout"
+      element={<MarketplaceCheckout />}
+    />
+
         {/* <Route path="*" element={<NotFoundPage />} /> */}
       </Route>
 
@@ -100,12 +123,16 @@ const AppRouter = () => {
           <Route path="marketplace/products" element={<MarketplaceProducts />} />
           <Route path="marketplace/products/new" element={<MarketplaceProductForm />} />
           <Route path="marketplace/products/:id/edit" element={<MarketplaceProductForm />} />
+          <Route path="marketplace/orders" element={<MarketplaceOrders />} />
+          <Route path="marketplace/inventory" element={<MarketplaceInventory />} />
+          <Route path="marketplace/customers" element={<MarketplaceCustomers />} />
           <Route path="settings" element={<OrganisationSettingsPage />} />
           <Route path="*" element={<OrganisationNotFoundPage />} />
       </Route>
 
 
     </Routes>
+    </CartProvider>
   );
 };
 
