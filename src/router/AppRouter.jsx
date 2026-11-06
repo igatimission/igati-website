@@ -56,6 +56,7 @@ import { CartProvider } from "../context/CartContext";
 import MarketplaceProductDetails from "../pages/marketplace/MarketplaceProductDetails";
 import MarketplaceCart from "../pages/marketplace/MarketplaceCart";
 import MarketplaceCheckout from "../pages/marketplace/MarketplaceCheckout";
+import MarketplacePaymentCallback from "../pages/marketplace/MarketplacePaymentCallback";
 
 const AppRouter = () => {
   return (
@@ -110,6 +111,11 @@ const AppRouter = () => {
       path="/marketplace/checkout"
       element={<MarketplaceCheckout />}
     />
+
+    <Route
+  path="/marketplace/payment/callback"
+  element={<MarketplacePaymentCallback />}
+/>
 
         {/* <Route path="*" element={<NotFoundPage />} /> */}
       </Route>

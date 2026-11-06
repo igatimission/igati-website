@@ -6,4 +6,10 @@ export const marketplaceShoppingApi = {
     method: "POST",
     body: JSON.stringify(data),
   }),
+
+  verifyPayment: (reference) =>
+  apiRequest(
+    `/marketplace/payments/${encodeURIComponent(reference)}/verify/`
+  ),
+  
 };
